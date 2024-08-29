@@ -49,3 +49,47 @@ export type messageFromEngine = {
         executedQuantity: string,
     }
 }
+
+
+export type order = {
+    "orderType": string,
+    "symbol": string,
+    "price": number,
+    "quantity": number,
+    "quoteQuantity": number,
+    "side": 'Bid' | 'Ask', // Bid , Ask
+    "clientId": String
+}
+
+export type orderType = {
+    "price": number,
+    "quantity": number,
+    "orderId": string,
+    "filled": number,
+    "side": 'Ask' | 'Bid',
+    "userId": string
+}
+
+export type fills = order & {
+    'otherUserId': string,
+    'tradeId': string
+}
+
+export type orderbookType = {
+    [key: string]: {
+        asks: orderType[],
+        bids: orderType[]
+    }
+}
+
+export type userBalances = {
+    [key: string]: {
+        available: string,
+        locked: string
+    }
+}
+
+export type orderbook = {
+    asks: orderType[];
+    bids: orderType[];
+}

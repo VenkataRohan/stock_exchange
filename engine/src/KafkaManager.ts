@@ -23,8 +23,6 @@ export class KafkaManager {
         await this.orderConsumer.subscribe({ topic: 'test_order' })
         await this.orderConsumer.run({
             eachMessage: async ({ topic, partition, message }) => {
-                console.log("Sdfjasdhflsadhlfjsadhfkjasdhfkjdshfk");
-                
                 console.log({
                     topic,
                     partition,
