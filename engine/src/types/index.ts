@@ -31,7 +31,7 @@ export type messageFromEngine = {
     data: {
         orderType: 'Market' | 'Limit',
         id: string,
-        clientId: 0
+        userId: string
         symbol: string,
         side: 'Bid' | 'Ask',
         quantity: string,
@@ -42,7 +42,7 @@ export type messageFromEngine = {
     data: {
         orderType: 'Market' | 'Limit',
         id: string,
-        clientId: 0
+        userId: string
         symbol: string,
         side: 'Bid' | 'Ask',
         quantity: string,
@@ -58,7 +58,7 @@ export type order = {
     "quantity": number,
     "quoteQuantity": number,
     "side": 'Bid' | 'Ask', // Bid , Ask
-    "clientId": String
+    "userId": string
 }
 
 export type orderType = {
@@ -76,20 +76,28 @@ export type fills = order & {
 }
 
 export type orderbookType = {
-    [key: string]: {
-        asks: orderType[],
-        bids: orderType[]
-    }
+    [key: string]: orderbook;
 }
 
 export type userBalances = {
     [key: string]: {
-        available: string,
-        locked: string
+        balance:{
+            available: string,
+            locked: string
+        },
+        stocks : {
+            [key: string]: {
+                quantity_available : number,
+                purchased_price : string,
+                locked_quantity : number
+            }
+        }
+        
     }
 }
 
 export type orderbook = {
     asks: orderType[];
     bids: orderType[];
+    currentPrice : string
 }

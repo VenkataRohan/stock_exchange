@@ -1,5 +1,5 @@
 import { orderbook, fills, order } from "../types";
-import { roundTwoDecimal, priceUpperBoundAsc, priceUpperBoundDsc } from ".";
+import { roundTwoDecimal, priceUpperBoundAsc, priceUpperBoundDsc, getRandomOrderId } from ".";
 
 export function matchMarketBid(orderbook: orderbook, order: order) {
     const fills: fills[] = []
@@ -29,9 +29,9 @@ export function matchMarketBid(orderbook: orderbook, order: order) {
                 "quantity": filledQty,
                 "quoteQuantity": totalprice,
                 "side": orderbook.asks[i].side, // Bid , Ask
-                "clientId": order.clientId,
+                "userId": order.userId,
                 "otherUserId": orderbook.asks[i].userId,
-                "tradeId": "khj"
+                "tradeId": "1"
             })
             if (orderbook.asks[i].filled == orderbook.asks[i].quantity) {
                 orderbook.asks.splice(i, 1);
@@ -48,7 +48,7 @@ export function matchMarketBid(orderbook: orderbook, order: order) {
 }
 
 export function matchBids(orderbook: orderbook, order: order) {
-    var executedQty = 0, excutedtotalprice = 0;
+    var executedQty = 0, excutedtotalprice = 0,last_traded_price = orderbook.currentPrice;
     const fills: fills[] = []
 
     for (var i = 0; i < orderbook.asks.length; i++) {
@@ -58,7 +58,8 @@ export function matchBids(orderbook: orderbook, order: order) {
         excutedtotalprice = roundTwoDecimal(excutedtotalprice + totalprice)
         executedQty += filledQty;
         orderbook.asks[i].filled += filledQty;
-
+        
+        last_traded_price = orderbook.asks[i].price.toString();
         fills.push({
             "orderType": order.orderType,
             "symbol": order.symbol,
@@ -66,7 +67,7 @@ export function matchBids(orderbook: orderbook, order: order) {
             "quantity": filledQty,
             "quoteQuantity": 0,
             "side": orderbook.asks[i].side, // Bid , Ask
-            "clientId": order.clientId,
+            "userId": order.userId,
             "otherUserId": orderbook.asks[i].userId,
             "tradeId": "1"
         })
@@ -81,16 +82,20 @@ export function matchBids(orderbook: orderbook, order: order) {
         const bid = {
             "price": order.price,
             "quantity": order.quantity,
-            "orderId": "",
+            "orderId": getRandomOrderId(),
             "filled": executedQty,
             "side": 'Bid',
-            "userId": ""
+            "userId": order.userId
         }
         var upperboundInd = priceUpperBoundDsc(order.price, orderbook.bids);
 
         //@ts-ignore
         orderbook.bids.splice(upperboundInd, 0, bid);
     }
+    
+    orderbook.currentPrice = last_traded_price;
+    console.log(fills);
+    
     return {
         fills,
         excutedtotalprice,
@@ -100,7 +105,7 @@ export function matchBids(orderbook: orderbook, order: order) {
 
 
 export function matchAsks(orderbook: orderbook, order: order) {
-    var executedQty = 0, excutedtotalprice = 0;
+    var executedQty = 0, excutedtotalprice = 0,last_traded_price = orderbook.currentPrice;
     const fills: fills[] = []
 
     for (var i = 0; i < orderbook.bids.length; i++) {
@@ -111,7 +116,7 @@ export function matchAsks(orderbook: orderbook, order: order) {
         excutedtotalprice = roundTwoDecimal(excutedtotalprice + totalprice)
         executedQty += filledQty;
         orderbook.bids[i].filled += filledQty;
-
+        last_traded_price = orderbook.bids[i].price.toString();
         fills.push({
             "orderType": order.orderType,
             "symbol": order.symbol,
@@ -119,8 +124,8 @@ export function matchAsks(orderbook: orderbook, order: order) {
             "quantity": filledQty,
             "quoteQuantity": 0,
             "side": orderbook.bids[i].side, // Bid , Ask
-            "clientId": order.clientId,
-            "otherUserId": orderbook.asks[i].userId,
+            "userId": order.userId,
+            "otherUserId": orderbook.bids[i].userId,
             "tradeId": "1"
         })
 
@@ -134,18 +139,18 @@ export function matchAsks(orderbook: orderbook, order: order) {
         const ask = {
             "price": order.price,
             "quantity": order.quantity,
-            "orderId": "",
+            "orderId": getRandomOrderId(),
             "filled": executedQty,
             "side": 'Ask',
-            "userId": ""
+            "userId": order.userId
         }
         var upperboundInd = priceUpperBoundAsc(order.price, orderbook.asks);
-
 
 
         //@ts-ignore
         orderbook.asks.splice(upperboundInd, 0, ask);
     }
+    orderbook.currentPrice = last_traded_price;
     return {
         fills,
         excutedtotalprice,
