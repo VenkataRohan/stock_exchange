@@ -52,6 +52,7 @@ export type messageFromEngine = {
 
 
 export type order = {
+    "orderId" : string,
     "orderType": string,
     "symbol": string,
     "price": number,

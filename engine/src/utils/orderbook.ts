@@ -23,6 +23,7 @@ export function matchMarketBid(orderbook: orderbook, order: order) {
             executedQty += filledQty;
 
             fills.push({
+                "orderId" : order.orderId,
                 "orderType": order.orderType,
                 "symbol": order.symbol,
                 "price": orderbook.asks[i].price,
@@ -61,6 +62,7 @@ export function matchBids(orderbook: orderbook, order: order) {
         
         last_traded_price = orderbook.asks[i].price.toString();
         fills.push({
+            "orderId" : order.orderId,
             "orderType": order.orderType,
             "symbol": order.symbol,
             "price": orderbook.asks[i].price,
@@ -118,6 +120,7 @@ export function matchAsks(orderbook: orderbook, order: order) {
         orderbook.bids[i].filled += filledQty;
         last_traded_price = orderbook.bids[i].price.toString();
         fills.push({
+            "orderId" : order.orderId,
             "orderType": order.orderType,
             "symbol": order.symbol,
             "price": orderbook.bids[i].price,

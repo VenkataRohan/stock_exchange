@@ -1,6 +1,6 @@
 import { Admin, Consumer, Kafka, Producer, KafkaMessage,Partitioners } from 'kafkajs'
 import { resolve } from 'path';
-import { messageFromEngine, messageToEngine } from './types';
+import { fills, messageFromEngine, messageToEngine, order } from './types';
 
 export class KafkaManager {
 
@@ -55,6 +55,65 @@ export class KafkaManager {
     public getProducer(): Producer {
         return this.orderProducer;
     }
+
+    public updateTradesDB(fills : fills[]){
+        fills.forEach((fill)=>{
+            const data = {
+                type: 'TRADE_ADDED',
+                data: {
+                    symbol: fill.symbol ,
+                    id: fill.tradeId.toString(),
+                    price: fill.price,
+                    quantity: fill.quantity.toString(),
+                    timestamp: Date.now()
+                }
+            }
+                this.orderProducer.send({
+                    topic : "",
+                    messages: [
+                        { value: data.toString()}
+                    ]
+                })
+        })
+    }
+
+    public updateOrdersDB(order : order,fills : fills[],executedQty : string){
+
+        const data = {
+            type: 'ORDER_UPDATE',
+            data: {
+                orderId: order.orderId,
+                executedQty: executedQty,
+                symbol: order.symbol,
+                price: order.price.toString(),
+                quantity: order.quantity.toString(),
+                side: order.side,
+            }
+        }
+            this.orderProducer.send({
+                topic : "",
+                messages: [
+                    { value: data.toString()}
+                ]
+            })
+
+        fills.forEach((fill)=>{
+            const data = {
+                type: 'ORDER_UPDATE',
+                data: {
+                    orderId: order.orderId,
+                    executedQty: executedQty,
+                }
+            }
+                this.orderProducer.send({
+                    topic : "",
+                    messages: [
+                        { value: data.toString()}
+                    ]
+                })
+        })
+    }
+
 
     public async sendOrderStatus(topic: string, message: string) {
         this.orderProducer.send({
