@@ -4,3 +4,5 @@ engine/node_modules
 engine/dist
 websockets/node_modules
 websockets/distx
+db/node_modules
+db/dist
