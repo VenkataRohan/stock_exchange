@@ -3,6 +3,6 @@ api/dist
 engine/node_modules
 engine/dist
 websockets/node_modules
-websockets/distx
+websockets/dist
 db/node_modules
 db/dist
