@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { KafkaManager } from "../KafkaManager";
-import { CREATE_ORDER } from "../types";
+import { CANCEL_ORDER, CREATE_ORDER } from "../types";
 
 export const orderRouter = Router()
 
@@ -27,4 +27,20 @@ orderRouter.post('/', async (req, res) => {
     res.json(JSON.parse(response));
 })
 
-
+orderRouter.delete('/', async (req, res) => {
+    const { orderType, symbol, price, quantity, side, userId } = req.body
+    console.log(req.body);
+    
+    const response = await KafkaManager.getInstance().sendAndAwait({
+        type : CANCEL_ORDER,
+        data : {
+            orderType, 
+            symbol,
+            price,
+            quantity,
+            side,
+            userId
+        }
+    })
+    res.json(JSON.parse(response));
+})

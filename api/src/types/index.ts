@@ -1,5 +1,6 @@
 export const CREATE_ORDER = "CREATE_ORDER"
 export const CANCEL_ORDER = "CANCEL_ORDER"
+export const GET_DEPTH = "GET_DEPTH"
 
 export const ORDER_PALACED = "ORDER_PALACED"
 export const ORDER_CANCLED = "ORDER_CANCLED"
@@ -23,6 +24,11 @@ export type messageToEngine = {
         quantity: string
         side: 'Bid' | 'Ask'
         userId: string
+    }
+} | {
+    type : typeof GET_DEPTH,
+    data : {
+        symbol : string
     }
 }
 
