@@ -1,52 +1,52 @@
 import { orderbook, fills, order } from "../types";
 import { roundTwoDecimal, priceUpperBoundAsc, priceUpperBoundDsc, getRandomOrderId } from ".";
 
-export function matchMarketBid(orderbook: orderbook, order: order) {
-    const fills: fills[] = []
-    if (order.side === 'Bid') {
-        var executedQty = 0, executedQuoteQty = 0, filledQty = 0;
-        var remaningQuoteQty = order.quoteQuantity;
-        var i = 0;
-        while (i < orderbook.asks.length) {
-            if (((orderbook.asks[i].quantity - orderbook.asks[i].filled) * orderbook.asks[i].price) <= remaningQuoteQty) {
-                filledQty = (orderbook.asks[i].quantity - orderbook.asks[i].filled);
-            } else {
-                filledQty = Math.floor(remaningQuoteQty / orderbook.asks[i].price)
-            }
+// export function matchMarketBid(orderbook: orderbook, order: order) {
+//     const fills: fills[] = []
+//     if (order.side === 'Bid') {
+//         var executedQty = 0, executedQuoteQty = 0, filledQty = 0;
+//         var remaningQuoteQty = order.quoteQuantity;
+//         var i = 0;
+//         while (i < orderbook.asks.length) {
+//             if (((orderbook.asks[i].quantity - orderbook.asks[i].filled) * orderbook.asks[i].price) <= remaningQuoteQty) {
+//                 filledQty = (orderbook.asks[i].quantity - orderbook.asks[i].filled);
+//             } else {
+//                 filledQty = Math.floor(remaningQuoteQty / orderbook.asks[i].price)
+//             }
 
-            if (filledQty == 0) break;
+//             if (filledQty == 0) break;
 
-            const totalprice = filledQty * orderbook.asks[i].price
-            executedQuoteQty = roundTwoDecimal(executedQuoteQty + totalprice);
-            remaningQuoteQty = roundTwoDecimal(remaningQuoteQty - totalprice);
-            orderbook.asks[i].filled = filledQty
-            executedQty += filledQty;
+//             const totalprice = filledQty * orderbook.asks[i].price
+//             executedQuoteQty = roundTwoDecimal(executedQuoteQty + totalprice);
+//             remaningQuoteQty = roundTwoDecimal(remaningQuoteQty - totalprice);
+//             orderbook.asks[i].filled = filledQty
+//             executedQty += filledQty;
 
-            fills.push({
-                "orderId" : order.orderId,
-                "orderType": order.orderType,
-                "symbol": order.symbol,
-                "price": orderbook.asks[i].price,
-                "quantity": filledQty,
-                "quoteQuantity": totalprice,
-                "side": orderbook.asks[i].side, // Bid , Ask
-                "userId": order.userId,
-                "otherUserId": orderbook.asks[i].userId,
-                "tradeId": "1"
-            })
-            if (orderbook.asks[i].filled == orderbook.asks[i].quantity) {
-                orderbook.asks.splice(i, 1);
-                i--;
-            }
-            i++;
-        }
-        return {
-            fills,
-            executedQuoteQty,
-            executedQty
-        }
-    }
-}
+//             fills.push({
+//                 "orderId" : order.orderId,
+//                 "orderType": order.orderType,
+//                 "symbol": order.symbol,
+//                 "price": orderbook.asks[i].price,
+//                 "quantity": filledQty,
+//                 "quoteQuantity": totalprice,
+//                 "side": orderbook.asks[i].side, // Bid , Ask
+//                 "userId": order.userId,
+//                 "otherUserId": orderbook.asks[i].userId,
+//                 "tradeId": "1"
+//             })
+//             if (orderbook.asks[i].filled == orderbook.asks[i].quantity) {
+//                 orderbook.asks.splice(i, 1);
+//                 i--;
+//             }
+//             i++;
+//         }
+//         return {
+//             fills,
+//             executedQuoteQty,
+//             executedQty
+//         }
+//     }
+// }
 
 export function matchBids(orderbook: orderbook, order: order) {
     var executedQty = 0, excutedtotalprice = 0,last_traded_price = orderbook.currentPrice;
@@ -67,7 +67,6 @@ export function matchBids(orderbook: orderbook, order: order) {
             "symbol": order.symbol,
             "price": orderbook.asks[i].price,
             "quantity": filledQty,
-            "quoteQuantity": 0,
             "side": orderbook.asks[i].side, // Bid , Ask
             "userId": order.userId,
             "otherUserId": orderbook.asks[i].userId,
@@ -125,7 +124,6 @@ export function matchAsks(orderbook: orderbook, order: order) {
             "symbol": order.symbol,
             "price": orderbook.bids[i].price,
             "quantity": filledQty,
-            "quoteQuantity": 0,
             "side": orderbook.bids[i].side, // Bid , Ask
             "userId": order.userId,
             "otherUserId": orderbook.bids[i].userId,

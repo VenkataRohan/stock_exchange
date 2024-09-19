@@ -1,11 +1,12 @@
 import * as fs from 'fs';
 
-import { order, userBalances, orderbookType, fills } from '../types'
+import { order, userBalances, orderbookType, fills, orderType, messageFromApi, CREATE_ORDER, GET_DEPTH, messageToApi, DEPTH, ORDER_PALACED } from '../types'
 import { combineArrayDepth, combineUpdatedArr, roundTwoDecimal } from '../utils';
-import { matchBids, matchMarketBid, matchAsks } from '../utils/orderbook';
+import { matchBids, matchAsks } from '../utils/orderbook';
 import { KafkaManager } from '../KafkaManager'
+import { measureMemory } from 'vm';
 
-class Engine {
+export class Engine {
     orderbooks: orderbookType = {};
     balances: userBalances
 
@@ -22,6 +23,21 @@ class Engine {
         console.log(this.balances);
     }
 
+    public async process(message: messageFromApi): Promise<messageToApi | undefined> {
+        
+        switch (message.type) {
+            case CREATE_ORDER:
+                return  await this.createOrder({ ...message.data, price: Number(message.data.price), quantity: Number(message.data.quantity) });
+                break;
+            case GET_DEPTH:
+                console.log("inside depth");
+                
+                return {type : DEPTH , data : this.getDepth(message.data.symbol)};
+                break;
+            default:
+                break;
+        }
+    }
     // public createMarketOrder(order: order) {
 
     //     const res = matchMarketBid(this.orderbooks[order.symbol], order)
@@ -68,7 +84,19 @@ class Engine {
             console.log(this.balances[order.userId]);
             this.updateBalance(res.fills, 'Bids');
             console.log(this.balances[order.userId]);
-
+            const resp: messageToApi = {
+            type:  ORDER_PALACED,
+            data: {
+                orderType: 'Limit',
+                id: "8769",
+                userId: order.userId,
+                symbol: order.symbol,
+                side: order.side,
+                quantity: order.quantity.toString(),
+                executedQuantity : res.executedQty.toString()
+            }
+        }
+            return resp
 
         } else {
             this.checkBalanceAndLockstock(order.userId, order.quantity.toString(), order.symbol)
@@ -92,10 +120,35 @@ class Engine {
         }
     }
 
+    public cancelOrder(orderId: string, symbol: string) {
+        var orderInd = this.orderbooks[symbol].bids.findIndex(e => e.orderId === orderId)
+        var order: orderType | undefined;
+        if (orderInd === -1) {
+            orderInd = this.orderbooks[symbol].asks.findIndex(e => e.orderId === orderId)
+
+            if (orderInd === -1) throw new Error('No order with order id : ' + orderId);
+            order = this.orderbooks[symbol].asks.splice(orderInd, 1)[0];
+            console.log(this.balances[order.userId].stocks[symbol]);
+            const remainingQty = order.quantity - order.filled;
+            this.balances[order.userId].stocks[symbol].locked_quantity -= remainingQty;
+            this.balances[order.userId].stocks[symbol].quantity_available += remainingQty;
+            console.log(this.balances[order.userId].stocks[symbol]);
+        } else {
+            order = this.orderbooks[symbol].bids.splice(orderInd, 1)[0];
+            console.log(this.balances[order.userId].balance);
+            const remainingPrice = (order.quantity - order.filled) * order.price;
+            this.balances[order.userId].balance.locked = (Number(this.balances[order.userId].balance.locked) - remainingPrice).toString();
+            this.balances[order.userId].balance.available = (Number(this.balances[order.userId].balance.available) + remainingPrice).toString();
+            console.log(this.balances[order.userId].balance);
+
+        }
+        console.log(order);
+    }
+
     public getDepth(symbol: string) {
         const depth = {
-            asks: [],
-            bids: []
+            bids: [] as [string, string][],
+            asks: [] as [string, string][]
         }
 
         const orderbook = this.orderbooks[symbol]
@@ -103,7 +156,13 @@ class Engine {
         depth.asks = combineArrayDepth(orderbook.asks);
         depth.bids = combineArrayDepth(orderbook.bids);
         // console.log(depth)
-        return depth
+        return  depth
+
+    }
+
+    public getTicker(symbol: string) {
+        const orderbook = this.orderbooks[symbol]      
+        return  {price : orderbook.currentPrice}
 
     }
 
@@ -231,7 +290,7 @@ class Engine {
         rev.forEach((ele) => {
             console.log(` p : ${ele.price}    - q : ${ele.quantity}    - f : ${ele.filled}    -u : ${ele.userId}     -o : ${ele.orderId}`);
         })
-        console.log("break");
+        console.log("current price : " + orderbook.currentPrice);
 
         orderbook.bids.forEach((ele: any) => {
             console.log(` p : ${ele.price}    - q : ${ele.quantity}    - f : ${ele.filled}     -u : ${ele.userId}     -o : ${ele.orderId}`);
@@ -240,9 +299,9 @@ class Engine {
 }
 
 
-const t = new Engine();
+// const t = new Engine();
 // t.getDepth('TATA')
-t.log()
+// t.log()
 // t.getOrderbooks();
 // t.createMarketOrder({
 //     "orderType": 'Market',
@@ -254,16 +313,21 @@ t.log()
 //     "clientId": 'String'
 // });
 
-t.createOrder({
-    "orderId" : "1234566",
-    "orderType": 'Limit',
-    "symbol": 'TATA',
-    "price": 1000.9,
-    "quantity": 3,
-    "quoteQuantity": 0,
-    "side": 'Ask',
-    "userId": '7sjkdzii9fpk9wlvimul3'
-});
+// t.cancelOrder(
+//     'goyvw4onku7u0e2c0y9gmo',
+//     'TATA',
+// )
+
+// t.createOrder({
+//     "orderId": "1234566",
+//     "orderType": 'Limit',
+//     "symbol": 'TATA',
+//     "price": 1000.9,
+//     "quantity": 3,
+//     "quoteQuantity": 0,
+//     "side": 'Ask',
+//     "userId": '7sjkdzii9fpk9wlvimul3'
+// });
 
 // t.createOrder({
 //     "orderType": 'Limit',
@@ -285,7 +349,7 @@ t.createOrder({
 //     "clientId": 'String'
 // });
 
-t.log()
+// t.log()
 
 
 
