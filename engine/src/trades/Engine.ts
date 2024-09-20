@@ -3,8 +3,7 @@ import * as fs from 'fs';
 import { order, userBalances, orderbookType, fills, orderType, messageFromApi, CREATE_ORDER, GET_DEPTH, messageToApi, DEPTH, ORDER_PALACED } from '../types'
 import { combineArrayDepth, combineUpdatedArr, roundTwoDecimal } from '../utils';
 import { matchBids, matchAsks } from '../utils/orderbook';
-import { KafkaManager } from '../KafkaManager'
-import { measureMemory } from 'vm';
+import { RabbitMqManager } from '../RabbitMqManager';
 
 export class Engine {
     orderbooks: orderbookType = {};
@@ -24,15 +23,15 @@ export class Engine {
     }
 
     public async process(message: messageFromApi): Promise<messageToApi | undefined> {
-        
+
         switch (message.type) {
             case CREATE_ORDER:
-                return  await this.createOrder({ ...message.data, price: Number(message.data.price), quantity: Number(message.data.quantity) });
+                return await this.createOrder({ ...message.data, price: Number(message.data.price), quantity: Number(message.data.quantity) });
                 break;
             case GET_DEPTH:
                 console.log("inside depth");
-                
-                return {type : DEPTH , data : this.getDepth(message.data.symbol)};
+
+                return { type: DEPTH, data: this.getDepth(message.data.symbol) };
                 break;
             default:
                 break;
@@ -77,25 +76,25 @@ export class Engine {
 
             const res = matchBids(this.orderbooks[order.symbol], order)
             // if (!res) return;
-            // await this.publishWsDepthUpdates(res.fills, 'Bid', order.symbol, order.price.toString());
-            // await this.publishWsTickerUpdates(this.orderbooks[order.symbol].currentPrice, order.symbol);
-            // await this.publishWsTradesUpdates(res.fills, order.symbol);
+            await this.publishWsDepthUpdates(res.fills, 'Bid', order.symbol, order.price.toString());
+            await this.publishWsTickerUpdates(this.orderbooks[order.symbol].currentPrice, order.symbol);
+            await this.publishWsTradesUpdates(res.fills, order.symbol);
             console.log(res);
             console.log(this.balances[order.userId]);
             this.updateBalance(res.fills, 'Bids');
             console.log(this.balances[order.userId]);
             const resp: messageToApi = {
-            type:  ORDER_PALACED,
-            data: {
-                orderType: 'Limit',
-                id: "8769",
-                userId: order.userId,
-                symbol: order.symbol,
-                side: order.side,
-                quantity: order.quantity.toString(),
-                executedQuantity : res.executedQty.toString()
+                type: ORDER_PALACED,
+                data: {
+                    orderType: 'Limit',
+                    id: "8769",
+                    userId: order.userId,
+                    symbol: order.symbol,
+                    side: order.side,
+                    quantity: order.quantity.toString(),
+                    executedQuantity: res.executedQty.toString()
+                }
             }
-        }
             return resp
 
         } else {
@@ -104,9 +103,9 @@ export class Engine {
             const res = matchAsks(this.orderbooks[order.symbol], order)
             if (!res) return;
 
-            // await this.publishWsDepthUpdates(res.fills,'Ask',order.symbol,order.price.toString());
-            // await this.publishWsTickerUpdates(this.orderbooks[order.symbol].currentprice,order.symbol);
-            // await this.publishWsTradesUpdates(res.fills,order.symbol);
+            await this.publishWsDepthUpdates(res.fills, 'Ask', order.symbol, order.price.toString());
+            await this.publishWsTickerUpdates(this.orderbooks[order.symbol].currentPrice, order.symbol);
+            await this.publishWsTradesUpdates(res.fills, order.symbol);
             console.log(res);
             console.log(order.userId);
             console.log(this.balances[order.userId]);
@@ -150,25 +149,21 @@ export class Engine {
             bids: [] as [string, string][],
             asks: [] as [string, string][]
         }
-
         const orderbook = this.orderbooks[symbol]
-
         depth.asks = combineArrayDepth(orderbook.asks);
         depth.bids = combineArrayDepth(orderbook.bids);
-        // console.log(depth)
-        return  depth
 
+        return depth
     }
 
     public getTicker(symbol: string) {
-        const orderbook = this.orderbooks[symbol]      
-        return  {price : orderbook.currentPrice}
-
+        const orderbook = this.orderbooks[symbol]
+        return { price: orderbook.currentPrice }
     }
 
     public async publishWsTickerUpdates(price: string, symbol: string) {
         const data = {
-            stream: `ticker.${symbol}`,
+            stream: `ticker@${symbol}`,
             data: {
                 e: `ticker`,
                 s: symbol,
@@ -176,9 +171,10 @@ export class Engine {
                 p: price
             }
         }
-        console.log("ticker");
+        console.log("ticker dfjkgs; gdsfgjk dfg9480t5 w4t dfghds rfw098rt dfjh ");
         console.log(data);
-        // await KafkaManager.getInstance().sendWsUpdates(`ticker.${symbol}`,JSON.stringify(data));
+        await RabbitMqManager.getInstance().connect();
+        await RabbitMqManager.getInstance().sendWsUpdates(`ticker@${symbol}`, JSON.stringify(data));
     }
 
     private updateBalance(fills: fills[], side: 'Bids' | 'Asks') {
@@ -212,7 +208,7 @@ export class Engine {
     public async publishWsTradesUpdates(fills: fills[], symbol: string) {
         fills.forEach(async (ele) => {
             const data = {
-                stream: `trade.${symbol}`,
+                stream: `trade@${symbol}`,
                 data: {
                     e: 'trade',
                     s: symbol,
@@ -226,20 +222,18 @@ export class Engine {
             }
             console.log("trades");
             console.log(data);
-
-            // await KafkaManager.getInstance().sendWsUpdates(`trade.${symbol}`,JSON.stringify(data))
+            await RabbitMqManager.getInstance().connect();
+            await RabbitMqManager.getInstance().sendWsUpdates(`trade@${symbol}`, JSON.stringify(data));
         })
     }
 
     public async publishWsDepthUpdates(fills: fills[], side: 'Bid' | 'Ask', symbol: string, price: string) {
         const depth = this.getDepth(symbol);
         if (side == 'Bid') {
-            // console.log(fills.map(f=>f.price).includes(1000.9));
-            // const askfills = fills.map(f=>f.price)
             const updatedasks = combineUpdatedArr(fills, depth.asks);
             const updatedbids = depth.bids.find(x => x[0] == price)
             const data = {
-                stream: `depth.${symbol}`,
+                stream: `depth@${symbol}`,
                 data: {
                     e: 'depth',
                     s: symbol,
@@ -251,11 +245,10 @@ export class Engine {
                     //t : tradeId
                 }
             }
-            // console.log(updatedasks);
-            // console.log(updatedbids);
             console.log("depth");
             console.log(data);
-            // await KafkaManager.getInstance().sendWsUpdates(`depth.${symbol}`,JSON.stringify(data))
+            await RabbitMqManager.getInstance().connect();
+            await RabbitMqManager.getInstance().sendWsUpdates(`depth@${symbol}`, JSON.stringify(data));
         }
 
         if (side == 'Ask') {
@@ -274,7 +267,8 @@ export class Engine {
                     //t : tradeId
                 }
             }
-            KafkaManager.getInstance().sendWsUpdates(`depth.${symbol}`, JSON.stringify(data))
+            await RabbitMqManager.getInstance().connect();
+            await RabbitMqManager.getInstance().sendWsUpdates(`depth@${symbol}`, JSON.stringify(data));
         }
     }
 
@@ -323,9 +317,8 @@ export class Engine {
 //     "orderType": 'Limit',
 //     "symbol": 'TATA',
 //     "price": 1000.9,
-//     "quantity": 3,
-//     "quoteQuantity": 0,
-//     "side": 'Ask',
+//     "quantity": 5,
+//     "side": 'Bid',
 //     "userId": '7sjkdzii9fpk9wlvimul3'
 // });
 

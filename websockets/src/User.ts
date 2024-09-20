@@ -15,18 +15,19 @@ export class User{
     }
 
     private addEventListerners(){
-        this.ws.on('message',(message : string)=>{
+        this.ws.on('message',async (message : string)=>{
             const msg = JSON.parse(message);
 
             if(msg.method == 'SUBSCRIBE'){
                 console.log(msg); 
-                msg.params.forEach((ele : string) => SubscriptionManager.getInstance().subscribe(this.id,ele));
-                
+                await SubscriptionManager.getInstance().connect();
+                msg.params.forEach(async(ele : string) => await SubscriptionManager.getInstance().subscribe(this.id,ele));
             }
 
             if(msg.method == 'UNSUBSCRIBE'){
                 console.log(msg);  
-                msg.params.forEach((ele : string) => SubscriptionManager.getInstance().unsubscribe(this.id,ele));
+                await SubscriptionManager.getInstance().connect();
+                msg.params.forEach(async(ele : string) => await  SubscriptionManager.getInstance().unsubscribe(this.id,ele));
             }
         })
     }

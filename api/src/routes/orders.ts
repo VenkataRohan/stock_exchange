@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { KafkaManager } from "../KafkaManager";
 import { CANCEL_ORDER, CREATE_ORDER } from "../types";
+import { RabbitMqManager } from "../RabbitMqManager";
 
 export const orderRouter = Router()
 
@@ -12,8 +12,9 @@ orderRouter.get('/', async (req, res) => {
 orderRouter.post('/', async (req, res) => {
     const { orderType, symbol, price, quantity, side, userId } = req.body
     console.log(req.body);
-    
-    const response = await KafkaManager.getInstance().sendAndAwait({
+    const rabbitMqManager = new RabbitMqManager();
+    await rabbitMqManager.connect();
+    const response = await rabbitMqManager.sendAndAwait({
         type : CREATE_ORDER,
         data : {
             orderType, 
@@ -24,14 +25,16 @@ orderRouter.post('/', async (req, res) => {
             userId
         }
     })
+
     res.json(JSON.parse(response));
 })
 
 orderRouter.delete('/', async (req, res) => {
     const { orderType, symbol, price, quantity, side, userId } = req.body
     console.log(req.body);
-    
-    const response = await KafkaManager.getInstance().sendAndAwait({
+    const rabbitMqManager = new RabbitMqManager();
+    await rabbitMqManager.connect();
+    const response = await rabbitMqManager.sendAndAwait({
         type : CANCEL_ORDER,
         data : {
             orderType, 
@@ -42,5 +45,6 @@ orderRouter.delete('/', async (req, res) => {
             userId
         }
     })
+
     res.json(JSON.parse(response));
 })

@@ -1,21 +1,21 @@
 import { Router } from "express";
-import { Kafka } from "kafkajs";
-import { KafkaManager } from "../KafkaManager";
 import { GET_DEPTH } from "../types";
-
+import { RabbitMqManager } from "../RabbitMqManager";
 export const depthRouter = Router();
 
 depthRouter.get('/',async(req,res)=>{
     const symbol = req.query.symbol
     console.log(symbol);
-    
-   const resp  = await KafkaManager.getInstance().sendAndAwait({
+    const rabbitMqManager = new RabbitMqManager();
+    await rabbitMqManager.connect();
+    const response = await rabbitMqManager.sendAndAwait({
         type : GET_DEPTH,
         data : {
             symbol : symbol as string
         }
     })
-    console.log(resp);
+
+    console.log(response);
     
-    res.send(JSON.parse(resp));
+    res.send(JSON.parse(response));
 })

@@ -1,17 +1,36 @@
-import { Consumer, Kafka } from 'kafkajs'
+import { Channel, Connection, Replies, connect } from 'amqplib';
 import { UserManager } from './UserManager';
 export class SubscriptionManager {
     private static instance : SubscriptionManager;
-    private kafka: Kafka;
-    private consumer: Consumer;
+    private connection: Connection | null = null;
+    private channel: Channel | null = null;
+    private queue: Replies.AssertQueue | null = null
     userToTopic: Map<string, string[]>;
     topicToUser: Map<string, string[]>;
     constructor() {
-        this.kafka = new Kafka({ clientId: 'websocketClient', brokers: ['localhost:9092'] });
-        this.consumer = this.kafka.consumer({ groupId: 'websocket-group' });
-        this.consumer.connect();
         this.userToTopic = new Map();
         this.topicToUser = new Map();
+    }
+
+    public async connect(){
+        if (!this.connection) {
+            this.connection = await connect('amqp://localhost');
+            this.channel = await this.connection.createChannel();
+            await this.channel.assertExchange('WsUpdates', 'direct', { durable: false });
+            this.queue = await this.channel.assertQueue('', { exclusive: true });
+            await this.channel.consume(
+                this.queue.queue,
+                async (msg) => {
+                    if (msg) {
+                        console.log(" [x] %s: '%s'", msg.fields.routingKey, msg.content.toString());
+                        this.topicToUser.get( msg.fields.routingKey)?.forEach((userId)=>UserManager.getInstance().getUser(userId)?.emit(msg.content.toString() || ""))
+                    }
+                },
+                { noAck: true }
+            );
+            console.log('conumer waiting');
+            
+        }
     }
 
     public static getInstance(){
@@ -22,44 +41,15 @@ export class SubscriptionManager {
     }
 
     public async subscribe(userId: string, subscription: string) {
-        console.log('userId');
-        console.log(userId);
         if (this.userToTopic.get(userId)?.includes(subscription)) return;
-
-
-        console.log('userId');
-        console.log(userId);
-
         
         this.userToTopic.set(userId, (this.userToTopic.get(userId) || []).concat(subscription));
         this.topicToUser.set(subscription, (this.topicToUser.get(subscription) || []).concat(userId));
         
-        console.log("insider subscribe");
-        console.log(this.topicToUser.get(subscription));
-        
         if (this.topicToUser.get(subscription)?.length === 1) {
-            const pausedTopicPartitions = this.consumer.paused()
 
-            for (const topicPartitions of pausedTopicPartitions) {
-                const { topic, partitions } = topicPartitions
-                console.log({ topic, partitions })
-                if(topic === subscription){
-                    await this.consumer.resume([{ topic, partitions: [partitions[0]]}]);
-                    return;
-                }
-            }
-
-            await this.consumer.subscribe({ topic: subscription, fromBeginning: true })
-            await this.consumer.run({
-                eachMessage: async ({ topic, partition, message }) => {
-                    console.log({
-                        topic,
-                        partition,
-                        value: message.value?.toString(),
-                    })
-                    this.topicToUser.get(topic)?.forEach((userId)=>UserManager.getInstance().getUser(userId)?.emit(message.value?.toString() || ""))
-                }
-            })
+            if (!this.channel || !this.queue) return;
+            await this.channel.bindQueue(this.queue.queue, 'WsUpdates', subscription);
             console.log("subscribed");
             
         }
@@ -85,10 +75,9 @@ export class SubscriptionManager {
                 this.topicToUser.delete(subscription);
                 this.userToTopic.set(userId, this.userToTopic.get(userId)?.filter(e => e !== subscription) || [])
                 console.log( this.userToTopic.get(userId));
-                
-                this.consumer.pause([{ topic: subscription }]);
-                console.log(this.consumer.paused());
-                
+                if (!this.channel || !this.queue) return;
+
+                await this.channel.unbindQueue(this.queue.queue, 'WsUpdates', subscription);                
                 console.log("unsubscribed");
             }
         }

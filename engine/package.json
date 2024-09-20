@@ -13,12 +13,13 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/amqplib": "^0.10.5",
     "@types/node": "^22.5.0",
     "nodemon": "^3.1.4",
     "ts-node": "^10.9.2"
   },
   "dependencies": {
-    "fs": "^0.0.1-security",
-    "kafkajs": "^2.2.4"
+    "amqplib": "^0.10.4",
+    "fs": "^0.0.1-security"
   }
 }
