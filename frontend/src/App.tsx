@@ -1,7 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
-import { PlaceOrder } from './components/place_order';
+import { PlaceOrder } from './components/PlaceOrder';
+import { SingnalManager } from './utils/SingnalManager';
+import { OrderBook } from './components/orderBook/OrderBook';
+
 
 function App() {
   const [count, setCount] = useState(0)
@@ -61,12 +64,24 @@ function App() {
       </tr>
     );
   }
+  useEffect(()=>{
+    SingnalManager.getInstance();
+
+    return ()=>{
+      SingnalManager.getInstance().close();
+    }
+  },[]);
+
   return (
     <>
     <h1 className="text-2xl font-bold underline">
       Hello world!
     </h1>
+    <div className='flex flex-row justify-around'>
     <PlaceOrder/>
+    <OrderBook symbol='TATA'/>
+    </div>
+   
     {/* <MarketRow symbol="TATA" high="300" lastPrice = "200" volume = "30" priceChangePercent = "2.2"/> */}
       {/* <div>
         <a href="https://vitejs.dev" target="_blank">
