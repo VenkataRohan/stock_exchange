@@ -49,8 +49,9 @@ import { roundTwoDecimal, priceUpperBoundAsc, priceUpperBoundDsc, getRandomOrder
 // }
 
 export function matchBids(orderbook: orderbook, order: order) {
-    var executedQty = 0, excutedtotalprice = 0,last_traded_price = orderbook.currentPrice;
+    var executedQty = 0, excutedtotalprice = 0, last_traded_price = orderbook.currentPrice;
     const fills: fills[] = []
+    const orderId = getRandomOrderId();
 
     for (var i = 0; i < orderbook.asks.length; i++) {
         if (order.price < orderbook.asks[i].price || order.quantity === executedQty) break;
@@ -59,18 +60,20 @@ export function matchBids(orderbook: orderbook, order: order) {
         excutedtotalprice = roundTwoDecimal(excutedtotalprice + totalprice)
         executedQty += filledQty;
         orderbook.asks[i].filled += filledQty;
-        
+
         last_traded_price = orderbook.asks[i].price.toString();
         fills.push({
-            "orderId" : order.orderId,
-            "orderType": order.orderType,
-            "symbol": order.symbol,
-            "price": orderbook.asks[i].price,
-            "quantity": filledQty,
-            "side": orderbook.asks[i].side, // Bid , Ask
-            "userId": order.userId,
-            "otherUserId": orderbook.asks[i].userId,
-            "tradeId": "1"
+            orderId: orderbook.asks[i].orderId,
+            orderType: order.orderType,
+            symbol: order.symbol,
+            price: orderbook.asks[i].price,
+            quantity: filledQty,
+            status : orderbook.bids[i].quantity === filledQty ? 'FILLED' : 'PARTIALLY_FILLED',
+            side: orderbook.asks[i].side, // Bid , Ask
+            filled: orderbook.asks[i].filled,
+            userId: orderbook.asks[i].userId,
+            otherUserId: order.userId,
+            tradeId: "1"
         })
 
         if (orderbook.asks[i].filled == orderbook.asks[i].quantity) {
@@ -80,34 +83,43 @@ export function matchBids(orderbook: orderbook, order: order) {
     }
 
     if (order.quantity > executedQty) {
-        const bid = {
-            "price": order.price,
-            "quantity": order.quantity,
-            "orderId": getRandomOrderId(),
-            "filled": executedQty,
-            "side": 'Bid',
-            "userId": order.userId
+        const bid: order = {
+            price: order.price,
+            orderType: order.orderType,
+            symbol: order.symbol,
+            quantity: order.quantity,
+            orderId: orderId,
+            filled: executedQty,
+            status : executedQty === 0 ? 'NEW' : 'PARTIALLY_FILLED',
+            side: 'Bid',
+            userId: order.userId
         }
         var upperboundInd = priceUpperBoundDsc(order.price, orderbook.bids);
 
         //@ts-ignore
         orderbook.bids.splice(upperboundInd, 0, bid);
     }
-    
+
     orderbook.currentPrice = last_traded_price;
     console.log(fills);
-    
+
     return {
         fills,
         excutedtotalprice,
-        executedQty
+        executedQty,
+        orderId
     }
 }
 
 
-export function matchAsks(orderbook: orderbook, order: order) {
-    var executedQty = 0, excutedtotalprice = 0,last_traded_price = orderbook.currentPrice;
+export function matchAsks(orderbook: orderbook, order : order, relavent_orders : order[]) {
+    var executedQty = 0, excutedtotalprice = 0, last_traded_price = orderbook.currentPrice;
     const fills: fills[] = []
+    const orderId = getRandomOrderId();
+
+    relavent_orders.forEach(relavent_order => {
+        
+    });
 
     for (var i = 0; i < orderbook.bids.length; i++) {
         if (order.price > orderbook.bids[i].price || order.quantity === executedQty) break;
@@ -119,15 +131,17 @@ export function matchAsks(orderbook: orderbook, order: order) {
         orderbook.bids[i].filled += filledQty;
         last_traded_price = orderbook.bids[i].price.toString();
         fills.push({
-            "orderId" : order.orderId,
-            "orderType": order.orderType,
-            "symbol": order.symbol,
-            "price": orderbook.bids[i].price,
-            "quantity": filledQty,
-            "side": orderbook.bids[i].side, // Bid , Ask
-            "userId": order.userId,
-            "otherUserId": orderbook.bids[i].userId,
-            "tradeId": "1"
+            orderId: orderbook.bids[i].orderId,
+            orderType: orderbook.bids[i].orderType,
+            symbol:  order.symbol,
+            price: orderbook.bids[i].price,
+            quantity: filledQty,
+            side: orderbook.bids[i].side, // Bid , Ask
+            filled: order.filled,
+            status : orderbook.bids[i].quantity === filledQty ? 'FILLED' : 'PARTIALLY_FILLED',
+            userId:  orderbook.bids[i].userId,
+            otherUserId: order.userId,
+            tradeId: "1"
         })
 
         if (orderbook.bids[i].filled == orderbook.bids[i].quantity) {
@@ -137,13 +151,16 @@ export function matchAsks(orderbook: orderbook, order: order) {
     }
 
     if (order.quantity > executedQty) {
-        const ask = {
-            "price": order.price,
-            "quantity": order.quantity,
-            "orderId": getRandomOrderId(),
-            "filled": executedQty,
-            "side": 'Ask',
-            "userId": order.userId
+        const ask: order = {
+            price: order.price,
+            orderType: order.orderType,
+            symbol: order.symbol,
+            quantity: order.quantity,
+            orderId: orderId,
+            filled: executedQty,
+            status : executedQty === 0 ? 'NEW' : 'PARTIALLY_FILLED',
+            side: 'Ask',
+            userId: order.userId
         }
         var upperboundInd = priceUpperBoundAsc(order.price, orderbook.asks);
 

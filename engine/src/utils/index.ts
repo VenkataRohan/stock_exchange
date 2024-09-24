@@ -1,12 +1,12 @@
-import { fills, orderType } from "../types";
+import { fills , order} from "../types";
 
-export function priceUpperBoundAsc(price: number, bids: orderType[]) {
-    var len = bids.length
+export function priceUpperBoundAsc(price: number, arr: order[]) {
+    var len = arr.length
     var low = 0, high = len - 1, res = len;
 
     while (low <= high) {
         var mid = Math.floor((high + low) / 2);
-        if (bids[mid].price > price) {
+        if (arr[mid].price > price) {
             res = mid;
             high = mid - 1;
         } else {
@@ -17,13 +17,13 @@ export function priceUpperBoundAsc(price: number, bids: orderType[]) {
     return res;
 }
 
-export function priceUpperBoundDsc(price: number, bids: orderType[]) {
-    var len = bids.length
+export function priceUpperBoundDsc(price: number, arr: order[]) {
+    var len = arr.length
     var low = 0, high = len - 1, res = len;
 
     while (low <= high) {
         var mid = Math.floor((high + low) / 2);
-        if (bids[mid].price >= price) {
+        if (arr[mid].price >= price) {
             low = mid + 1;
         } else {
             res = mid;
@@ -34,7 +34,7 @@ export function priceUpperBoundDsc(price: number, bids: orderType[]) {
     return res;
 }
 
-export function combineArrayDepth(arr: orderType[]) {
+export function combineArrayDepth(arr: order[]) {
     const res: any = []
     arr.forEach((ele) => {
         const [price, quantity,filled] = [ele.price, ele.quantity,ele.filled];

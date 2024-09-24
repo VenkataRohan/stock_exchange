@@ -2,13 +2,13 @@
   "orderbooks": {
     "TATA": {
       "baseAsset": "TATA",
-      "bids": [
+      "bids":[
         {
           "price": 1000.8,
           "quantity": 5,
           "orderId": "goyvw4onku7u0e2c0y9gm1",
           "filled": 0,
-          "side": "Bid",
+          "side": "bid",
           "userId": "7tqoz7edtsl3uer02l3q3p1"
         },
         {
@@ -16,7 +16,7 @@
           "quantity": 2,
           "orderId": "goyvw4onku7u0e2c0y9gmo",
           "filled": 0,
-          "side": "Bid",
+          "side": "bid",
           "userId": "7tqoz7edtsl3uer02l3q3p2"
         },
         {
@@ -24,7 +24,7 @@
           "quantity": 6,
           "orderId": "7tqoz7edtsl3uer02l3q3p",
           "filled": 0,
-          "side": "Bid",
+          "side": "bid",
           "userId": "7tqoz7edtsl3uer02l3q3p3"
         },
         {
@@ -32,7 +32,7 @@
           "quantity": 7,
           "orderId": "fzqdtolofin2iq4wskojp",
           "filled": 0,
-          "side": "Bid",
+          "side": "bid",
           "userId": "7tqoz7edtsl3uer02l3q3p4"
         },
         {
@@ -40,7 +40,7 @@
           "quantity": 2,
           "orderId": "goyvw4onku7u0e2c0y9gm",
           "filled": 0,
-          "side": "Bid",
+          "side": "bid",
           "userId": "7tqoz7edtsl3uer02l3q3p5"
         },
         {
@@ -48,7 +48,7 @@
           "quantity": 4,
           "orderId": "goyvw4onku7u0e2c0y9gmo1",
           "filled": 0,
-          "side": "Bid",
+          "side": "bid",
           "userId": "7tqoz7edtsl3uer02l3q3p6"
         },
         {
@@ -56,7 +56,7 @@
           "quantity": 6,
           "orderId": "v3ospmn608nefrx9dx68km",
           "filled": 0,
-          "side": "Bid",
+          "side": "bid",
           "userId": "7tqoz7edtsl3uer02l3q3p7"
         },
         {
@@ -64,7 +64,7 @@
           "quantity": 2,
           "orderId": "c305axascnstap6ne06w0l",
           "filled": 0,
-          "side": "Bid",
+          "side": "bid",
           "userId": "7tqoz7edtsl3uer02l3q3p8"
         },
         {
@@ -72,7 +72,7 @@
           "quantity": 1,
           "orderId": "d4109og7q9pdkxhrrv2fpc",
           "filled": 0,
-          "side": "Bid",
+          "side": "bid",
           "userId": "7tqoz7edtsl3uer02l3q3p9"
         },
         {
@@ -80,7 +80,7 @@
           "quantity": 3,
           "orderId": "f4xul60ufyl6e2vehy4hmv",
           "filled": 0,
-          "side": "Bid",
+          "side": "bid",
           "userId": "7tqoz7edtsl3uer02l3q3p10"
         },
         {
@@ -88,7 +88,7 @@
           "quantity": 2,
           "orderId": "ebqfpy22srlau9oph6nl4l",
           "filled": 0,
-          "side": "Bid",
+          "side": "bid",
           "userId": "ebqfpy22srlau9oph6nl4l1"
         },
         {
@@ -96,7 +96,7 @@
           "quantity": 1,
           "orderId": "sjj78in672m93hr6cqrzme",
           "filled": 0,
-          "side": "Bid",
+          "side": "bid",
           "userId": "ebqfpy22srlau9oph6nl4l2"
         },
         {
@@ -104,7 +104,7 @@
           "quantity": 6,
           "orderId": "7869tih7gpgc97u78e5xq",
           "filled": 0,
-          "side": "Bid",
+          "side": "bid",
           "userId": "ebqfpy22srlau9oph6nl4l3"
         },
         {
@@ -112,17 +112,17 @@
           "quantity": 1,
           "orderId": "83et2agnah4c3ufqn2im6d",
           "filled": 0,
-          "side": "Bid",
+          "side": "bid",
           "userId": "ebqfpy22srlau9oph6nl4l4"
         }
       ],
-      "asks": [
+      "asks":  [
         {
           "price": 1000.9,
           "quantity": 4,
           "orderId": "7sjkdzii9fpk9wlvimuo3",
           "filled": 0,
-          "side": "Ask",
+          "side": "ask",
           "userId": "q1qm83f33jhkar6jxevdx2"
         },
         {
@@ -130,7 +130,7 @@
           "quantity": 2,
           "orderId": "7sjkdzii9fpk9wlvimul3",
           "filled": 0,
-          "side": "Ask",
+          "side": "ask",
           "userId": "ebqfpy22srlau9oph6nl4l5"
         },
         {
@@ -138,7 +138,7 @@
           "quantity": 3,
           "orderId": "qddnkj93dh9jnyi8awiak",
           "filled": 0,
-          "side": "Ask",
+          "side": "ask",
           "userId": "ebqfpy22srlau9oph6nl4l6"
         },
         {
@@ -146,7 +146,7 @@
           "quantity": 1,
           "orderId": "q1qm83f33jhkar6jxevdx",
           "filled": 0,
-          "side": "Ask",
+          "side": "ask",
           "userId": "ebqfpy22srlau9oph6nl4l7"
         },
         {
@@ -154,7 +154,7 @@
           "quantity": 1,
           "orderId": "o2wfbnl7tqi6jkk4i5q35",
           "filled": 0,
-          "side": "Ask",
+          "side": "ask",
           "userId": "o2wfbnl7tqi6jkk4i5q351"
         },
         {
@@ -162,7 +162,7 @@
           "quantity": 1,
           "orderId": "o2wfbnl7tqi6jkk4i5q3w5",
           "filled": 0,
-          "side": "Ask",
+          "side": "ask",
           "userId": "o2wfbnl7tqi6jkk4i5q352"
         },
         {
@@ -170,7 +170,7 @@
           "quantity": 5,
           "orderId": "o2wfbnl7tqi6jkk4j5q35",
           "filled": 0,
-          "side": "Ask",
+          "side": "ask",
           "userId": "q1qm83f33jhkar6jxevdx1"
         },
         {
@@ -178,7 +178,7 @@
           "quantity": 1,
           "orderId": "o2wfbnl7tei6jkk4i5q35",
           "filled": 0,
-          "side": "Ask",
+          "side": "ask",
           "userId": "o2wfbnl7tqi6jkk4i5q353"
         },
         {
@@ -186,7 +186,7 @@
           "quantity": 3,
           "orderId": "q8k2lof4dsf1arvqs4evic",
           "filled": 0,
-          "side": "Ask",
+          "side": "ask",
           "userId": "o2wfbnl7tqi6jkk4i5q354"
         }
       ],
@@ -198,52 +198,40 @@
     "7tqoz7edtsl3uer02l3q3p": {
       "balance": {
         "available": "5000",
-        "locked": 1000
+        "locked": "1000"
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "uvycgd4wzrto8aywjsta",
-            "quantity": 5,
-            "locked": 0,
-            "price": "1000.8",
-            "ts": "2024-09-15T21:39:02.941Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 5,
+          "purchased_price": "1000.8",
+          "locked_quantity": 0
+        }
       }
     },
     "c305axascnstap6ne06w0l": {
       "balance": {
         "available": "8000",
-        "locked": 0
+        "locked": "0"
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "sk4ovgemf2f8efjc5ew2a",
-            "quantity": 1,
-            "locked": 0,
-            "price": "1000.9",
-            "ts": "2024-09-19T14:34:27.074Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 1,
+          "purchased_price": "1000.9",
+          "locked_quantity": 0
+        }
       }
     },
     "d4109og7q9pdkxhrrv2fpc": {
       "balance": {
         "available": "2000",
-        "locked": 0
+        "locked": "0"
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "d4q5qaz9lybsj93kr6z3ue",
-            "quantity": 5,
-            "locked": 0,
-            "price": "1000.6",
-            "ts": "2024-09-14T21:09:34.603Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 5,
+          "purchased_price": "1000.6",
+          "locked_quantity": 0
+        }
       }
     },
     "q1qm83f33jhkar6jxevdx2": {
@@ -252,15 +240,14 @@
         "locked": 4003.6
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "s9p8fa17wmfhlqhomiv4ei",
-            "quantity": 0,
-            "locked": 4,
-            "price": "1000.8",
-            "ts": "2024-09-21T18:50:23.647Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 4,
+          "purchased_price": "1000.8",
+          "locked_quantity": 4,
+          "order_history" : [
+            {"quantity" : 5 , "price" : 1000.2 ,"loeked":"0" ,"timestam": "342342423"}
+          ] 
+        }
       }
     },
     "ebqfpy22srlau9oph6nl4l5": {
@@ -269,32 +256,24 @@
         "locked": 2002.2
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "pkhdwy17g9k4xatrcnat",
-            "quantity": 0,
-            "locked": 2,
-            "price": "1000.8",
-            "ts": "2024-09-14T22:48:09.873Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 2,
+          "purchased_price": "1000.8",
+          "locked_quantity": 2
+        }
       }
     },
     "ebqfpy22srlau9oph6nl4l6": {
       "balance": {
         "available": "5000",
-        "locked": 3003.9
+        "locked": 3003.8999999999996
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "a8yfakokvlew5acjtttp9",
-            "quantity": 0,
-            "locked": 3,
-            "price": "1000.8",
-            "ts": "2024-09-19T03:32:47.965Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 3,
+          "purchased_price": "1000.8",
+          "locked_quantity": 3
+        }
       }
     },
     "ebqfpy22srlau9oph6nl4l7": {
@@ -303,15 +282,11 @@
         "locked": 1001.7
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "p0pnkdw8qaplvrxn89vuxb",
-            "quantity": 0,
-            "locked": 1,
-            "price": "1000.8",
-            "ts": "2024-09-14T08:55:17.576Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 1,
+          "purchased_price": "1000.8",
+          "locked_quantity": 1
+        }
       }
     },
     "o2wfbnl7tqi6jkk4i5q351": {
@@ -320,15 +295,11 @@
         "locked": 1002.4
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "eochh42m638z8utf8a07h",
-            "quantity": 0,
-            "locked": 1,
-            "price": "1000.8",
-            "ts": "2024-09-21T08:00:08.548Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 1,
+          "purchased_price": "1000.8",
+          "locked_quantity": 1
+        }
       }
     },
     "o2wfbnl7tqi6jkk4i5q352": {
@@ -337,15 +308,11 @@
         "locked": 1002.8
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "w1n5vvjpanvj4ilm81do",
-            "quantity": 0,
-            "locked": 1,
-            "price": "1000.8",
-            "ts": "2024-09-16T08:45:32.909Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 1,
+          "purchased_price": "1000.8",
+          "locked_quantity": 1
+        }
       }
     },
     "q1qm83f33jhkar6jxevdx1": {
@@ -354,15 +321,11 @@
         "locked": 5014.5
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "buktbw0wighv9pygl44o5s",
-            "quantity": 0,
-            "locked": 5,
-            "price": "1000.8",
-            "ts": "2024-09-15T09:15:17.966Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 5,
+          "purchased_price": "1000.8",
+          "locked_quantity": 5
+        }
       }
     },
     "o2wfbnl7tqi6jkk4i5q353": {
@@ -371,15 +334,11 @@
         "locked": 1003.1
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "oc3t3pyzuuk7kb5s7z3lqj",
-            "quantity": 0,
-            "locked": 1,
-            "price": "1000.8",
-            "ts": "2024-09-20T09:30:23.365Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 1,
+          "purchased_price": "1000.8",
+          "locked_quantity": 1
+        }
       }
     },
     "o2wfbnl7tqi6jkk4i5q354": {
@@ -388,15 +347,11 @@
         "locked": 3021.3
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "1c8k82gaum14a0k9wi3nle",
-            "quantity": 0,
-            "locked": 3,
-            "price": "1000.8",
-            "ts": "2024-09-19T12:02:01.600Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 3,
+          "purchased_price": "1000.8",
+          "locked_quantity": 3
+        }
       }
     },
     "7tqoz7edtsl3uer02l3q3p1": {
@@ -405,15 +360,11 @@
         "locked": 5004
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "w9k1ys3aiznfz3tv3g8c",
-            "quantity": 0,
-            "locked": 0,
-            "price": "0",
-            "ts": "2024-09-14T16:56:27.084Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 0,
+          "purchased_price": 0,
+          "locked_quantity": 0
+        }
       }
     },
     "7tqoz7edtsl3uer02l3q3p2": {
@@ -422,15 +373,11 @@
         "locked": 2001.4
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "4wx6jaedf6pedztfxzfvrn",
-            "quantity": 0,
-            "locked": 0,
-            "price": "0",
-            "ts": "2024-09-20T05:22:40.276Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 0,
+          "purchased_price": 0,
+          "locked_quantity": 0
+        }
       }
     },
     "7tqoz7edtsl3uer02l3q3p3": {
@@ -439,15 +386,11 @@
         "locked": 6003.6
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "myni0zjtr4pjp7p8hi30g",
-            "quantity": 0,
-            "locked": 0,
-            "price": "0",
-            "ts": "2024-09-19T19:20:22.461Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 0,
+          "purchased_price": 0,
+          "locked_quantity": 0
+        }
       }
     },
     "7tqoz7edtsl3uer02l3q3p4": {
@@ -456,15 +399,11 @@
         "locked": 7004.2
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "ec419y87kisz2jmp6ib6kc",
-            "quantity": 0,
-            "locked": 0,
-            "price": "0",
-            "ts": "2024-09-19T05:50:29.437Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 0,
+          "purchased_price": 0,
+          "locked_quantity": 0
+        }
       }
     },
     "7tqoz7edtsl3uer02l3q3p5": {
@@ -473,15 +412,11 @@
         "locked": 2001.2
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "i1jefx3fq69sblsqp1nckh",
-            "quantity": 0,
-            "locked": 0,
-            "price": "0",
-            "ts": "2024-09-21T01:47:14.508Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 0,
+          "purchased_price": 0,
+          "locked_quantity": 0
+        }
       }
     },
     "7tqoz7edtsl3uer02l3q3p6": {
@@ -490,15 +425,11 @@
         "locked": 4002.4
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "6onh8jk09v2c2zhs8mpkkp",
-            "quantity": 0,
-            "locked": 0,
-            "price": "0",
-            "ts": "2024-09-15T21:21:58.027Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 0,
+          "purchased_price": 0,
+          "locked_quantity": 0
+        }
       }
     },
     "7tqoz7edtsl3uer02l3q3p7": {
@@ -507,15 +438,11 @@
         "locked": 6003
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "4l2g57gev4i4knlxdkl8zq",
-            "quantity": 0,
-            "locked": 0,
-            "price": "0",
-            "ts": "2024-09-19T16:07:00.081Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 0,
+          "purchased_price": 0,
+          "locked_quantity": 0
+        }
       }
     },
     "7tqoz7edtsl3uer02l3q3p8": {
@@ -524,15 +451,11 @@
         "locked": 2001
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "6zactmvozap13156sdwzjj",
-            "quantity": 0,
-            "locked": 0,
-            "price": "0",
-            "ts": "2024-09-21T23:28:11.881Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 0,
+          "purchased_price": 0,
+          "locked_quantity": 0
+        }
       }
     },
     "7tqoz7edtsl3uer02l3q3p9": {
@@ -541,15 +464,11 @@
         "locked": 1000.5
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "9n4h4afcobh3p17kfy8wrc",
-            "quantity": 0,
-            "locked": 0,
-            "price": "0",
-            "ts": "2024-09-18T03:05:32.565Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 0,
+          "purchased_price": 0,
+          "locked_quantity": 0
+        }
       }
     },
     "7tqoz7edtsl3uer02l3q3p10": {
@@ -558,15 +477,11 @@
         "locked": 3001.2
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "e831xtojommo7nhh5tfehb",
-            "quantity": 0,
-            "locked": 0,
-            "price": "0",
-            "ts": "2024-09-17T23:46:40.290Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 0,
+          "purchased_price": 0,
+          "locked_quantity": 0
+        }
       }
     },
     "ebqfpy22srlau9oph6nl4l1": {
@@ -575,15 +490,11 @@
         "locked": 2000.2
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "htk8c5p6466m0ot7fyj9mh",
-            "quantity": 0,
-            "locked": 0,
-            "price": "0",
-            "ts": "2024-09-19T14:26:19.201Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 0,
+          "purchased_price": 0,
+          "locked_quantity": 0
+        }
       }
     },
     "ebqfpy22srlau9oph6nl4l2": {
@@ -592,32 +503,24 @@
         "locked": 999.9
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "rhfh179aqfp7sv537rcwp",
-            "quantity": 0,
-            "locked": 0,
-            "price": "0",
-            "ts": "2024-09-20T11:24:27.676Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 0,
+          "purchased_price": 0,
+          "locked_quantity": 0
+        }
       }
     },
     "ebqfpy22srlau9oph6nl4l3": {
       "balance": {
         "available": 1000,
-        "locked": 5998.8
+        "locked": 5998.799999999999
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "p7xzwkmdqsqobb3ln0o9g",
-            "quantity": 0,
-            "locked": 0,
-            "price": "0",
-            "ts": "2024-09-22T04:08:33.825Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 0,
+          "purchased_price": 0,
+          "locked_quantity": 0
+        }
       }
     },
     "ebqfpy22srlau9oph6nl4l4": {
@@ -626,21 +529,11 @@
         "locked": 0
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "2sorgh1zldq7nzclzag9xg",
-            "quantity": 1,
-            "locked": 0,
-            "price": "1000.7",
-            "ts": "2024-09-17T10:39:36.244Z"
-          },{
-            "id": "2sorgh1zldq7nzclzag9x",
-            "quantity": 3,
-            "locked": 0,
-            "price": "1000.8",
-            "ts": "2024-09-18T10:39:36.244Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 2,
+          "purchased_price": "1000.7",
+          "locked_quantity": 0
+        }
       }
     },
     "7sjkdzii9fpk9wlvimul3": {
@@ -649,22 +542,11 @@
         "locked": 0
       },
       "stocks": {
-        "TATA": [
-          {
-            "id": "etirwukgpvi0iopx9faajtf",
-            "quantity": 0,
-            "locked": 3,
-            "price": "1000.8",
-            "ts": "2024-09-20T07:56:56.480Z"
-          },
-          {
-            "id": "etirwukgpvi0iopx9faajtf",
-            "quantity": 2,
-            "locked": 1,
-            "price": "1000.8",
-            "ts": "2024-09-20T07:56:56.480Z"
-          }
-        ]
+        "TATA": {
+          "quantity_available": 5,
+          "purchased_price": 1000.8,
+          "locked_quantity": 2
+        }
       }
     }
   }
