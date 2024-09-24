@@ -2,6 +2,7 @@ import express from 'express';
 import { orderRouter } from './routes/orders';
 import { depthRouter } from './routes/depth';
 import cors from 'cors'
+import { accountRouter } from './routes/account';
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use('/api/v1/order',orderRouter);
 app.use('/api/v1/depth',depthRouter);
+app.use('/api/v1/account',accountRouter);
 
 
 app.listen(PORT,()=>{
