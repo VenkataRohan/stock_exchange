@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import { PlaceOrder } from './components/PlaceOrder';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import { SingnalManager } from './utils/SingnalManager';
-import { OrderBook } from './components/orderBook/OrderBook';
+import { Home } from './components/Home';
+import { Account } from './components/Account';
+import { Orders } from './components/Orders';
 
 
 function App() {
@@ -73,37 +73,22 @@ function App() {
   },[]);
 
   return (
-    <>
-    <h1 className="text-2xl font-bold underline">
-      Hello world!
-    </h1>
-    <div className='flex flex-row justify-around'>
-    <PlaceOrder/>
-    <OrderBook symbol='TATA'/>
-    </div>
-   
-    {/* <MarketRow symbol="TATA" high="300" lastPrice = "200" volume = "30" priceChangePercent = "2.2"/> */}
-      {/* <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p> */}
-    </>
+    <Router>
+    <nav className='flex flex-row justify-around'>
+
+          <Link className="bg-blue-500" to="/">Home</Link>
+          <Link  className="bg-blue-500" to="/get_order">Get Orders</Link>
+          <Link className="bg-blue-500" to="/balance">Balance</Link>
+    </nav>
+
+    <Routes>
+
+      {/* <Route path="/" element={<Home />} /> */}
+      <Route path="/" element={<Home/>} />
+      <Route path="/get_order" element={<Orders userId='7sjkdzii9fpk9wlvimul3' />} />
+      <Route path="/balance" element={<Account userId='7sjkdzii9fpk9wlvimul3'/>} />
+    </Routes>
+  </Router>
   )
 }
 

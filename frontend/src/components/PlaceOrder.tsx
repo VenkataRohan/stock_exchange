@@ -1,20 +1,12 @@
 import { useEffect, useState } from "react"
-import axios from "axios";
 import { SingnalManager } from "../utils/SingnalManager";
-import { getDepth, placeOrder } from "../utils/httpClient";
+import {  placeOrder } from "../utils/httpClient";
+import { order } from "../types";
 
 export function PlaceOrder() {
   const [quantity, setQuantity] = useState('1');
   const [price, setPrice] = useState('1000.8');
-  useEffect( () => {
-    console.log('in place order useeffct');
-
-    const getData = async()=>{
-      const res = await getDepth('TATA')
-      console.log(res);
-      
-    }
-    getData();
+  useEffect(() => {
     const msg = {
       "method": "SUBSCRIBE",
       "params": [
@@ -23,7 +15,7 @@ export function PlaceOrder() {
     }
     SingnalManager.getInstance().sendMessages(msg)
 
-    return ()=>{
+    return () => {
       const msg = {
         "method": "UNSUBSCRIBE",
         "params": [
@@ -32,18 +24,16 @@ export function PlaceOrder() {
       }
       SingnalManager.getInstance().sendMessages(msg)
     }
-  },[])
-  const onSubmit = async() => {
-    console.log(quantity);
-    console.log(price);
-    let data = JSON.stringify({
-      "orderType": "Limit",
-      "symbol": "TATA",
-      "price": price,
-      "quantity": quantity,
-      "side": "Bid",
-      "userId": "7sjkdzii9fpk9wlvimul3"
-    });
+  }, [])
+  const onSubmit = async () => {
+    let data: order = {
+      orderType: "Limit",
+      symbol: "TATA",
+      price: price,
+      quantity: quantity,
+      side: 'Bid',
+      userId: "7sjkdzii9fpk9wlvimul3"
+    };
     const res = await placeOrder(data);
     console.log(res);
   }
