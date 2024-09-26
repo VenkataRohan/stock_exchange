@@ -1,6 +1,6 @@
 import { Channel, Connection, Replies, connect } from 'amqplib';
 import { resolve } from 'path';
-import { messageToEngine } from './types';
+import { messageToDb, messageToEngine } from './types';
 
 
 export class RabbitMqManager {
@@ -19,8 +19,8 @@ export class RabbitMqManager {
     }
 
     public async sendAndAwait(msg: messageToEngine) {
-          
-        return new Promise<string>((resolve,reject)=>{
+
+        return new Promise<string>((resolve, reject) => {
             if (!this.channel || !this.queue) {
                 resolve('no channel')
                 return
@@ -41,7 +41,33 @@ export class RabbitMqManager {
                 replyTo: this.queue.queue
             });
         })
-        
+
+    }
+
+    public async queryDb(msg: messageToDb) {
+
+        return new Promise<string>((resolve, reject) => {
+            if (!this.channel || !this.queue) {
+                resolve('no channel')
+                return
+            }
+            const correlationId = this.getRandomId();
+            this.channel.consume(this.queue.queue, function (msg) {
+                if (msg?.properties.correlationId == correlationId) {
+                    console.log(' [.] Got %s', msg?.content.toString());
+                    resolve(msg?.content.toString());
+                }
+            }, {
+                noAck: true
+            });
+
+            this.channel.sendToQueue('api_db_queue',
+                Buffer.from(JSON.stringify(msg)), {
+                correlationId: correlationId,
+                replyTo: this.queue.queue
+            });
+        })
+
     }
 
     private getRandomId() {

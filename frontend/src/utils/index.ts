@@ -4,7 +4,7 @@ export function priceLowerBoundAsc(price: number, arr: any) {
 
     while (low <= high) {
         var mid = Math.floor((high + low) / 2);
-        if (arr[mid] >= price) {
+        if (Number(arr[mid][0]) >= Number(price)) {
             res = mid;
             high = mid - 1;
         } else {

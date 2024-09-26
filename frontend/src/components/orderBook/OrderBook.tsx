@@ -20,6 +20,9 @@ export const OrderBook = ({symbol}: {symbol :string})=>{
                 if(asks[ind] && asks[ind][0] === ele[0]){
                     //@ts-ignore 
                     asks[ind][1] = ele[1];
+                    if(ele[1] == 0){
+                        asks.splice(ind,1);
+                    }
                 }else{
                     //@ts-ignore   
                     asks.splice(ind, 0, ele);
@@ -36,6 +39,9 @@ export const OrderBook = ({symbol}: {symbol :string})=>{
                 if(bids[ind] && bids[ind][0] === ele[0]){
                     //@ts-ignore 
                     bids[ind][1] = ele[1];
+                    if(ele[1] == 0){
+                        bids.splice(ind,1);
+                    }
                 }else{    
                 //@ts-ignore
                     bids.splice(ind, 0, ele);

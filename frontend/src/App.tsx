@@ -4,7 +4,7 @@ import { SingnalManager } from './utils/SingnalManager';
 import { Home } from './components/Home';
 import { Account } from './components/Account';
 import { Orders } from './components/Orders';
-
+import { TradeView } from "./components/TradeView"
 
 function App() {
   const [count, setCount] = useState(0)
@@ -79,6 +79,7 @@ function App() {
           <Link className="bg-blue-500" to="/">Home</Link>
           <Link  className="bg-blue-500" to="/get_order">Get Orders</Link>
           <Link className="bg-blue-500" to="/balance">Balance</Link>
+          <Link className="bg-blue-500" to="/trade_view">trade_view</Link>
     </nav>
 
     <Routes>
@@ -86,9 +87,11 @@ function App() {
       {/* <Route path="/" element={<Home />} /> */}
       <Route path="/" element={<Home/>} />
       <Route path="/get_order" element={<Orders userId='7sjkdzii9fpk9wlvimul3' />} />
+      <Route path="/trade_view" element={<TradeView/>} />
       <Route path="/balance" element={<Account userId='7sjkdzii9fpk9wlvimul3'/>} />
     </Routes>
   </Router>
+ 
   )
 }
 

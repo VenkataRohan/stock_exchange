@@ -1,7 +1,8 @@
 // This is your Prisma schema file,
+
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Looking for ways to speed up your queries,or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
@@ -14,9 +15,55 @@ datasource db {
 }
 
 model stock {
-  id     Int       @default(autoincrement())
+  id     Int      @default(autoincrement())
   symbol String   @db.VarChar(255)
   price  String
   time   DateTime
+
   @@unique([id, time])
+}
+
+model User {
+  id          String  @id @default(cuid())
+  name        String
+  email       String  @unique
+  password    String
+  trades      Trade[] @relation("UserTrades")
+  otherTrades Trade[] @relation("OtherUserTrades")
+}
+
+enum OrderType {
+  Limit
+  Market
+}
+
+enum Status {
+  NEW
+  FILLED
+  PARTIALLY_FILLED
+  CANCELED
+}
+
+enum Side {
+  Ask
+  Bid
+}
+
+model Trade {
+  id          Int       @id @default(autoincrement())
+  orderId     String
+  orderType   OrderType
+  symbol      String
+  price       String
+  quantity    String
+  status      Status
+  side        Side
+  filled      String
+  userId      String
+  otherUserId String
+  user        User      @relation("UserTrades", fields: [userId], references: [id])
+  otherUser   User      @relation("OtherUserTrades", fields: [otherUserId], references: [id])
+
+  @@index([userId])
+  @@index([otherUserId])
 }

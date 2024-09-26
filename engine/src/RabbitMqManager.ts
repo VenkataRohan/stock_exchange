@@ -24,6 +24,7 @@ export class RabbitMqManager {
             this.connection = await connect('amqp://localhost');
             this.channel = await this.connection.createChannel();
             await this.channel.assertExchange('WsUpdates', 'direct', { durable: false });
+            await this.channel.assertQueue('db_queue',{durable: true})
             this.queue = await this.channel.assertQueue('rpc_queue', {
                 durable: false
             });
@@ -56,7 +57,6 @@ export class RabbitMqManager {
     }
 
     public async sendWsUpdates(topic: string, msg: string) {
-        console.log('sedwsupdaewafalsdfhajksdfh');
         
         if (!this.channel || !this.queue) {
             return;
@@ -64,5 +64,15 @@ export class RabbitMqManager {
         console.log(topic);
 
         this.channel.publish('WsUpdates', topic, Buffer.from(msg));
+    }
+
+    public async sendDbUpdates(topic: string, msg: string) {
+        
+        if (!this.channel || !this.queue) {
+            return;
+        }
+        console.log(topic);
+
+        this.channel.sendToQueue('db_queue',Buffer.from(msg),{persistent: true})
     }
 }

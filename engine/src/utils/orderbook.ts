@@ -67,13 +67,13 @@ export function matchBids(orderbook: orderbook, order: order) {
             orderType: order.orderType,
             symbol: order.symbol,
             price: orderbook.asks[i].price,
-            quantity: filledQty,
+            quantity: orderbook.asks[i].quantity,
             status : orderbook.bids[i].quantity === filledQty ? 'FILLED' : 'PARTIALLY_FILLED',
             side: orderbook.asks[i].side, // Bid , Ask
             filled: orderbook.asks[i].filled,
             userId: orderbook.asks[i].userId,
             otherUserId: order.userId,
-            tradeId: "1"
+            ts : new Date()
         })
 
         if (orderbook.asks[i].filled == orderbook.asks[i].quantity) {
@@ -141,7 +141,7 @@ export function matchAsks(orderbook: orderbook, order : order, relavent_orders :
             status : orderbook.bids[i].quantity === filledQty ? 'FILLED' : 'PARTIALLY_FILLED',
             userId:  orderbook.bids[i].userId,
             otherUserId: order.userId,
-            tradeId: "1"
+            ts : new Date()
         })
 
         if (orderbook.bids[i].filled == orderbook.bids[i].quantity) {

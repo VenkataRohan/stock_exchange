@@ -15,6 +15,28 @@ export const getDepth = async (symbol: string) : Promise<messageFromApi>=> {
   return res.data;
 }
 
+export const getTrade = async (symbol: string) : Promise<messageFromApi>=> {
+  const res = await axios.get(`${BASE_URL}/trade?symbol=${symbol}`, {
+    headers: {
+      //   'Authorization': 'Bearer ', 
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+  })
+  return res.data;
+}
+
+export const getTicker = async (symbol: string) : Promise<messageFromApi>=> {
+  const res = await axios.get(`${BASE_URL}/ticker?symbol=${symbol}`, {
+    headers: {
+      //   'Authorization': 'Bearer ', 
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+  })
+  return res.data;
+}
+
 export const getBalance = async (userId : string) => {
   const res = await axios.post(`${BASE_URL}/account/balance`, { userId: userId }, {
     headers: {

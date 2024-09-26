@@ -3,7 +3,11 @@ export const CANCEL_ORDER = "CANCEL_ORDER"
 export const GET_DEPTH = "GET_DEPTH"
 export const GET_BALANCE = "GET_BALANCE"
 export const GET_ORDER = "GET_ORDER"
+export const GET_TRADE = "GET_TRADE"
 export const ADD_BALANCE = "ADD_BALANCE"
+export const LOGIN = "LOGIN"
+export const SIGNUP = "SIGNUP"
+export const GET_TICKER = "GET_TICKER"
 
 export const ORDER_PALACED = "ORDER_PALACED"
 export const ORDER_CANCLED = "ORDER_CANCLED"
@@ -83,19 +87,45 @@ export type messageFromEngine = {
     type: typeof ADD_BALANCE,
     data: any
 } | {
-    type : typeof GET_ORDER,
-    data : order[]
+    type: typeof GET_ORDER,
+    data: order[]
 }
 
 
 export type order = {
     orderId: string,
-    orderType: string,
-    status : 'NEW' | 'FILLED' | 'PARTIALLY_FILLED' | 'CANCELED',
+    orderType: 'Limit' | 'Market',
+    status: 'NEW' | 'FILLED' | 'PARTIALLY_FILLED' | 'CANCELED',
     symbol: string,
     price: number,
     quantity: number,
     side: 'Bid' | 'Ask', // Bid , Ask
     userId: string,
-    filled : number
+    filled: number
+}
+
+
+export type messageToDb = {
+    type: typeof GET_TRADE,
+    data: {
+        symbol: string
+    }
+} | {
+    type: typeof LOGIN,
+    data: {
+        email: string,
+        password: string
+    }
+} | {
+    type: typeof SIGNUP,
+    data: {
+        name: string,
+        email: string,
+        password: string
+    }
+} | {
+    type: typeof GET_TICKER,
+    data: {
+        symbol: string,
+    }
 }

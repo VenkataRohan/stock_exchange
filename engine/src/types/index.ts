@@ -4,6 +4,8 @@ export const GET_DEPTH = "GET_DEPTH"
 export const GET_BALANCE = "GET_BALANCE"
 export const ADD_BALANCE = "ADD_BALANCE"
 export const GET_ORDER = "GET_ORDER"
+export const TRADE_ADDED = "TRADE_ADDED"
+export const PRICE_UPDATED = "PRICE_UPDATED"
 
 export const ORDER_PALACED = "ORDER_PALACED"
 export const ORDER_CANCLED = "ORDER_CANCLED"
@@ -101,7 +103,7 @@ export type messageToApi = {
 
 export type order = {
     orderId?: string,
-    orderType: string,
+    orderType: 'Limit' | 'Market',
     status : 'NEW' | 'FILLED' | 'PARTIALLY_FILLED' | 'CANCELED',
     symbol: string,
     price: number,
@@ -114,7 +116,7 @@ export type order = {
 
 export type fills = order & {
     otherUserId: string,
-    tradeId: string
+    ts : Date
 }
 
 export type orderbookType = {
@@ -144,4 +146,11 @@ export type orderbook = {
     asks: order[];
     bids: order[];
     currentPrice: string
+}
+
+
+
+export type messageToDb = {
+    type : typeof TRADE_ADDED,
+    data : fills
 }
