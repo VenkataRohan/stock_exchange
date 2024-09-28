@@ -1,5 +1,5 @@
 import { Channel, Connection, Replies, connect } from 'amqplib';
-import { GET_TRADE, LOGIN, TRADE_ADDED, fills, messageFromApi, messageFromEngine, SIGNUP, GET_TICKER, ticker } from './types';
+import { GET_TRADE, LOGIN, TRADE_ADDED, fills, messageFromApi, messageFromEngine, GET_DAILY_STOCKS_STATS, SIGNUP, GET_TICKER, ticker, GET_DAILY_STOCK_STATS } from './types';
 import prisma from './prisma';
 import { Prisma } from '@prisma/client';
 
@@ -68,6 +68,8 @@ export class RabbitMqManager {
                 return await this.signup(message);
             case GET_TICKER:
                 return await this.getTicker(message.data);
+            case GET_DAILY_STOCK_STATS:
+                return await this.getDailyStockStats(message.data);
             default:
                 break;
         }
@@ -86,7 +88,8 @@ export class RabbitMqManager {
                 side: fill.side,
                 filled: fill.filled.toString(),
                 userId: fill.userId,
-                otherUserId: fill.otherUserId
+                otherUserId: fill.otherUserId,
+                time: fill.ts
             }
         })
 
@@ -97,6 +100,47 @@ export class RabbitMqManager {
                 time: fill.ts
             }
         })
+    }
+
+    // private async getDailyStockStats({ symbol }: { symbol: string }){
+    //     const result = await prisma.stock.aggregate({
+    //         where: {
+    //           symbol: symbol,  // Your stock symbol
+    //           time: {
+    //             gte: new Date(new Date().setHours(0, 0, 0, 0)),  // Start of the day (midnight)
+    //           },
+    //         },
+    //         _max: {
+    //           price: true,   
+    //         },
+    //         _min: {
+    //           price: true,  
+    //         },
+    //         _count: {
+    //           id: true, 
+    //         }
+    //       });
+    //       console.log(new Date(new Date().setHours(0, 0, 0, 0)));
+    //       console.log(result);
+
+    //       return result;
+    // }
+
+    private async getDailyStockStats({ symbols }: { symbols: string[] }) {
+        const result : any = await prisma.$queryRaw`
+        SELECT 
+            symbol,
+            first(price, time) AS opening_price,  
+            last(price, time) AS closing_price,   
+            max(price) AS high_price,             
+            min(price) AS low_price,              
+            COUNT(*) AS volume                    
+        FROM stock
+        WHERE time >= now()::date                
+        AND symbol = ANY(${symbols}) 
+        GROUP BY symbol` ;
+
+        return result.map((ele : any) => ({ ...ele , volume : ele.volume.toString()}))
     }
 
 
@@ -110,7 +154,7 @@ export class RabbitMqManager {
 
     private async getTicker({ symbol }: { symbol: string }) {
 
-        const result : ticker[] = await prisma.$queryRaw`
+        const result: ticker[] = await prisma.$queryRaw`
     SELECT
         to_char(time_bucket('1 day', "time"), 'YYYY-MM-DD')  AS time,
         "symbol",

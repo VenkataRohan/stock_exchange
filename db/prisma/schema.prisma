@@ -59,6 +59,7 @@ model Trade {
   status      Status
   side        Side
   filled      String
+  time        DateTime
   userId      String
   otherUserId String
   user        User      @relation("UserTrades", fields: [userId], references: [id])

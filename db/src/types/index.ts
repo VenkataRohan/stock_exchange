@@ -3,6 +3,8 @@ export const GET_TRADE = "GET_TRADE"
 export const LOGIN = "LOGIN"
 export const SIGNUP = "SIGNUP"
 export const GET_TICKER = "GET_TICKER"
+export const GET_DAILY_STOCK_STATS = "GET_DAILY_STOCK_STATS"
+export const GET_DAILY_STOCKS_STATS = "GET_DAILY_STOCKS_STATS"
 
 export type order = {
     orderId?: string,
@@ -50,6 +52,16 @@ export type messageFromApi = {
     type: typeof GET_TICKER,
     data: {
         symbol: string;
+    }
+} | {
+    type: typeof GET_DAILY_STOCK_STATS,
+    data: {
+        symbols: string[];
+    }
+} | {
+    type: typeof GET_DAILY_STOCK_STATS,
+    data: {
+        symbols: string[];
     }
 }
 
