@@ -43,10 +43,10 @@ export class RabbitMqManager {
                 if (msg) {
                     const message = JSON.parse(msg.content.toString())
                     console.log(message);
-                    this.engine.log()
+                    // this.engine.log()
                     const response = await this.engine.process(message)
                     console.log(response);
-                    this.engine.log();
+                    // this.engine.log();
                     this.channel?.sendToQueue(msg.properties.replyTo, Buffer.from(JSON.stringify(response)), {
                         correlationId: msg.properties.correlationId
                     });

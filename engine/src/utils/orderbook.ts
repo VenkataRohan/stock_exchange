@@ -64,7 +64,7 @@ export function matchBids(orderbook: orderbook, order: order) {
         last_traded_price = orderbook.asks[i].price.toString();
         fills.push({
             orderId: orderbook.asks[i].orderId,
-            orderType: order.orderType,
+            orderType: 'Limit',
             symbol: order.symbol,
             price: orderbook.asks[i].price,
             quantity: orderbook.asks[i].quantity,
@@ -132,7 +132,7 @@ export function matchAsks(orderbook: orderbook, order : order, relavent_orders :
         last_traded_price = orderbook.bids[i].price.toString();
         fills.push({
             orderId: orderbook.bids[i].orderId,
-            orderType: orderbook.bids[i].orderType,
+            orderType: 'Limit',
             symbol:  order.symbol,
             price: orderbook.bids[i].price,
             quantity: filledQty,
@@ -170,6 +170,7 @@ export function matchAsks(orderbook: orderbook, order : order, relavent_orders :
     }
     orderbook.currentPrice = last_traded_price;
     return {
+        orderId,
         fills,
         excutedtotalprice,
         executedQty

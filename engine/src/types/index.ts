@@ -6,6 +6,8 @@ export const ADD_BALANCE = "ADD_BALANCE"
 export const GET_ORDER = "GET_ORDER"
 export const TRADE_ADDED = "TRADE_ADDED"
 export const PRICE_UPDATED = "PRICE_UPDATED"
+export const GET_STOCK_BALANCE = "GET_STOCK_BALANCE"
+export const GET_CURRENTPRICE = "GET_CURRENTPRICE"
 
 export const ORDER_PALACED = "ORDER_PALACED"
 export const ORDER_CANCLED = "ORDER_CANCLED"
@@ -46,9 +48,20 @@ export type messageFromApi = {
         amount: string,
     }
 } | {
+    type: typeof GET_STOCK_BALANCE,
+    data: {
+        userId: string,
+        symbol: string,
+    }
+} | {
     type: typeof GET_ORDER,
     data: {
         userId: string
+    }
+} | {
+    type: typeof GET_CURRENTPRICE,
+    data: {
+        symbol: string,
     }
 }
 
@@ -73,7 +86,7 @@ export type messageToApi = {
         symbol: string,
         side: 'Bid' | 'Ask',
         quantity: string,
-        status : 'CANCELED'
+        status: 'CANCELED'
         executedQuantity: string,
     }
 } | {
@@ -96,6 +109,17 @@ export type messageToApi = {
 } | {
     type: typeof GET_ORDER,
     data: order[]
+} | {
+    type: typeof GET_STOCK_BALANCE,
+    data: {
+        balance: string,
+        [symbol: string]: string
+    }
+} | {
+    type: typeof GET_CURRENTPRICE,
+    data: {
+        price: string,
+    }
 }
 
 
@@ -104,19 +128,19 @@ export type messageToApi = {
 export type order = {
     orderId?: string,
     orderType: 'Limit' | 'Market',
-    status : 'NEW' | 'FILLED' | 'PARTIALLY_FILLED' | 'CANCELED',
+    status: 'NEW' | 'FILLED' | 'PARTIALLY_FILLED' | 'CANCELED',
     symbol: string,
     price: number,
     quantity: number,
     side: 'Bid' | 'Ask', // Bid , Ask
     userId: string,
-    filled : number
+    filled: number
 }
 
 
 export type fills = order & {
     otherUserId: string,
-    ts : Date
+    ts: Date
 }
 
 export type orderbookType = {
@@ -151,6 +175,6 @@ export type orderbook = {
 
 
 export type messageToDb = {
-    type : typeof TRADE_ADDED,
-    data : fills
+    type: typeof TRADE_ADDED,
+    data: fills
 }

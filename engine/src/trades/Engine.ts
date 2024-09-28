@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 
-import { order, userBalances, orderbookType, fills, messageFromApi, CREATE_ORDER, GET_BALANCE, ADD_BALANCE, GET_DEPTH, messageToApi, DEPTH, ORDER_PALACED, ERROR, GET_ORDER, CANCEL_ORDER, ORDER_CANCLED, TRADE_ADDED } from '../types'
+import { order, userBalances, orderbookType, fills, messageFromApi, GET_STOCK_BALANCE, CREATE_ORDER, GET_BALANCE, ADD_BALANCE, GET_DEPTH, messageToApi, DEPTH, ORDER_PALACED, ERROR, GET_ORDER, CANCEL_ORDER, ORDER_CANCLED, TRADE_ADDED, GET_CURRENTPRICE } from '../types'
 import { combineArrayDepth, combineUpdatedArr, roundTwoDecimal } from '../utils';
 import { matchBids, matchAsks } from '../utils/orderbook';
 import { RabbitMqManager } from '../RabbitMqManager';
@@ -42,9 +42,23 @@ export class Engine {
         return this.balances[userId];
     }
 
+    getCurrentPrice(symbol: string): messageToApi {
+        return { type: GET_CURRENTPRICE, data: { price: this.orderbooks[symbol].currentPrice } };
+    }
+
     addUserBalance(userId: string, amount: string) {
         this.balances[userId].balance.available = (Number(this.balances[userId].balance.available) + Number(amount)).toString();
         return this.balances[userId];
+    }
+
+    getStockBalance(userId: string, symbol: string): messageToApi {
+        return {
+            type: GET_STOCK_BALANCE,
+            data: {
+                balance: this.balances[userId].balance.available,
+                [symbol]: this.balances[userId].stocks[symbol].reduce((sum, ele) => sum + ele.quantity, 0).toString()
+            }
+        }
     }
 
     public async process(message: messageFromApi): Promise<messageToApi | undefined> {
@@ -52,29 +66,22 @@ export class Engine {
             switch (message.type) {
                 case CREATE_ORDER:
                     return await this.createOrder({ ...message.data, price: Number(message.data.price), quantity: Number(message.data.quantity), filled: 0, status: 'NEW' });
-                    break;
                 case CANCEL_ORDER:
-                    console.log(message);
-
                     //@ts-ignore
                     return await this.cancelOrder(message.data.orderId, message.data.symbol);
-                    break;
                 case GET_ORDER:
-                    console.log("inside order");
-
                     return { type: GET_ORDER, data: this.getOrders(message.data.userId) };
-                    break;
                 case GET_DEPTH:
-                    console.log("inside depth");
-
                     return { type: DEPTH, data: this.getDepth(message.data.symbol) };
-                    break;
                 case GET_BALANCE:
                     //@ts-ignore
                     return { type: GET_BALANCE, data: this.getUserBalance(message.data.userId) };
-                    break;
                 case ADD_BALANCE:
                     return { type: ADD_BALANCE, data: this.addUserBalance(message.data.userId, message.data.amount) };
+                case GET_STOCK_BALANCE:
+                    return await this.getStockBalance(message.data.userId, message.data.symbol)
+                case GET_CURRENTPRICE:
+                    return await this.getCurrentPrice(message.data.symbol);
                 default:
                     break;
             }
@@ -152,7 +159,9 @@ export class Engine {
             // if (!res) return;
             await this.updateTradeDb(res.fills);
             await this.publishWsDepthUpdates(res.fills, 'Bid', order.symbol, order.price.toString());
-            await this.publishWsTickerUpdates(this.orderbooks[order.symbol].currentPrice, order.symbol);
+            if (res.fills.length != 0) {
+                await this.publishWsTickerUpdates(this.orderbooks[order.symbol].currentPrice, order.symbol);
+            }
             await this.publishWsTradesUpdates(res.fills, order.symbol);
             console.log(res);
             console.log(order.userId);
@@ -184,9 +193,11 @@ export class Engine {
 
             const res = matchAsks(this.orderbooks[order.symbol], order, relavent_orders)
             if (!res) return;
-
+            await this.updateTradeDb(res.fills);
             await this.publishWsDepthUpdates(res.fills, 'Ask', order.symbol, order.price.toString());
-            await this.publishWsTickerUpdates(this.orderbooks[order.symbol].currentPrice, order.symbol);
+            if (res.fills.length != 0) {
+                await this.publishWsTickerUpdates(this.orderbooks[order.symbol].currentPrice, order.symbol);
+            }
             await this.publishWsTradesUpdates(res.fills, order.symbol);
             console.log(res);
             console.log(order.userId);
@@ -198,6 +209,21 @@ export class Engine {
                 console.log(ele.userId);
                 console.log(JSON.stringify(this.balances[ele.userId]));
             })
+
+            const resp: messageToApi = {
+                type: ORDER_PALACED,
+                data: {
+                    orderType: 'Limit',
+                    orderId: res.orderId,
+                    userId: order.userId,
+                    symbol: order.symbol,
+                    side: order.side,
+                    quantity: order.quantity.toString(),
+                    status: res.executedQty === 0 ? 'NEW' : order.quantity === res.executedQty ? 'FILLED' : 'PARTIALLY_FILLED',
+                    executedQuantity: res.executedQty.toString()
+                }
+            }
+            return resp
         }
     }
 
@@ -211,13 +237,11 @@ export class Engine {
             order = this.orderbooks[symbol].asks.splice(orderInd, 1)[0];
             console.log(this.balances[order.userId].stocks[symbol]);
             var remainingQty = order.quantity - order.filled;
-            // this.balances[order.userId].stocks[symbol].locked_quantity -= remainingQty;
-            // this.balances[order.userId].stocks[symbol].quantity_available += remainingQty;
             const user_stock = this.balances[order.userId].stocks[symbol];
             for (var ind = 0; ind < user_stock.length && remainingQty > 0; ind++) {
                 var val = Math.min(user_stock[ind].locked, remainingQty);
                 user_stock[ind].locked -= val;
-                user_stock[ind].quantity = val
+                user_stock[ind].quantity += val
                 remainingQty -= val;
             }
             console.log(this.balances[order.userId].stocks[symbol]);
@@ -249,12 +273,10 @@ export class Engine {
     }
 
     private async updateTradeDb(fills: fills[]) {
-        fills.forEach(async(fill)=>{
-            console.log("update jhlhh kj h  hlhj ljh");
-            
+        fills.forEach(async (fill) => {
             await RabbitMqManager.getInstance().connect();
             await RabbitMqManager.getInstance().sendDbUpdates(TRADE_ADDED, JSON.stringify({ type: TRADE_ADDED, data: fill }));
-        })      
+        })
     }
 
     public getDepth(symbol: string) {
@@ -370,7 +392,7 @@ export class Engine {
                     s: symbol,
                     E: Date.now(),
                     a: updatedasks,
-                    b: updatedbids ? [updatedbids] : []
+                    b: updatedbids ? [[Number(updatedbids[0]), Number(updatedbids[1])]] : []
                     //todo
                     // i : orderId
                     //t : tradeId
@@ -382,11 +404,11 @@ export class Engine {
 
         if (side == 'Ask') {
             const updatedbids = combineUpdatedArr(fills, depth.bids);
-            const updatedasks = depth.asks.find(x => x[0] == price)
+            const updatedasks = depth.asks.find(x => x[0] == price)?.map(x => [Number(x[0]), Number(x[1])]);
             const data = {
-                stream: `depth.${symbol}`,
+                stream: `depth@${symbol}`,
                 data: {
-                    a: updatedasks ? [updatedasks] : [],
+                    a: updatedasks ? [[Number(updatedasks[0]), Number(updatedasks[1])]] : [],
                     b: updatedbids,
                     e: 'depth',
                     s: symbol,
