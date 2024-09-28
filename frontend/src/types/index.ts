@@ -10,16 +10,20 @@ export const ORDER_CANCLED = "ORDER_CANCLED"
 export const DEPTH = "DEPTH"
 export const ERROR = "ERROR"
 
+export const WS_TICKER = "ticker"
+export const WS_DEPTH = "depth"
+export const WS_TRADE = "trade"
+
 export type order = {
     orderId?: string,
     orderType: string,
-    status? : 'NEW' | 'FILLED' | 'PARTIALLY_FILLED' | 'CANCELED',
+    status?: 'NEW' | 'FILLED' | 'PARTIALLY_FILLED' | 'CANCELED',
     symbol: string,
     price: string,
     quantity: string,
     side: 'Bid' | 'Ask', // Bid , Ask
     userId: string,
-    filled? : number
+    filled?: number
 }
 
 
@@ -44,7 +48,7 @@ export type messageFromApi = {
         symbol: string,
         side: 'Bid' | 'Ask',
         quantity: string,
-        status : 'CANCELED'
+        status: 'CANCELED'
         executedQuantity: string,
     }
 } | {
@@ -69,3 +73,12 @@ export type messageFromApi = {
     data: order[]
 }
 
+
+export type stockStats = {
+    symbol: string,
+    opening_price: string,
+    closing_price: string,
+    high_price: string,
+    low_price: string,
+    volume: string,
+}

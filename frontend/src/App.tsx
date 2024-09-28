@@ -1,17 +1,18 @@
 import { useEffect, useState } from 'react'
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { SingnalManager } from './utils/SingnalManager';
 import { Home } from './components/Home';
-import { Account } from './components/Account';
-import { Orders } from './components/Orders';
-import { TradeView } from "./components/TradeView"
+import { Account } from './components/account/Account';
+import { Orders } from './components/order/Orders';
+import { TradeView } from "./components/trade/TradeView"
+import { Navbar } from './components/Navbar';
 
 function App() {
   const [count, setCount] = useState(0)
-  function MarketRow( market :any) {
+  function MarketRow(market: any) {
     //const router = useRouter();
     console.log(market);
-    
+
     return (
       <tr className="cursor-pointer border-t border-baseBorderLight hover:bg-white/7 w-full" >
         <td className="px-1 py-3">
@@ -60,38 +61,32 @@ function App() {
           <p className="text-base font-medium tabular-nums text-greenText">
             {Number(market.priceChangePercent)?.toFixed(3)} %
           </p>
-        </td> 
+        </td>
       </tr>
     );
   }
-  useEffect(()=>{
+  useEffect(() => {
     SingnalManager.getInstance();
 
-    return ()=>{
+    return () => {
       SingnalManager.getInstance().close();
     }
-  },[]);
+  }, []);
 
   return (
     <Router>
-    <nav className='flex flex-row justify-around'>
+      <Navbar />
+      
+      <Routes>
+      
+        {/* <Route path="/" element={<Home />} /> */}
+        <Route path="/" element={<Home userId='7sjkdzii9fpk9wlvimul3' />} />
+        <Route path="/get_order" element={<Orders userId='7sjkdzii9fpk9wlvimul3' />} />
+        <Route path="/trade_view" element={<TradeView />} />
+        <Route path="/balance" element={<Account userId='7sjkdzii9fpk9wlvimul3' />} />
+      </Routes>
+    </Router>
 
-          <Link className="bg-blue-500" to="/">Home</Link>
-          <Link  className="bg-blue-500" to="/get_order">Get Orders</Link>
-          <Link className="bg-blue-500" to="/balance">Balance</Link>
-          <Link className="bg-blue-500" to="/trade_view">trade_view</Link>
-    </nav>
-
-    <Routes>
-
-      {/* <Route path="/" element={<Home />} /> */}
-      <Route path="/" element={<Home/>} />
-      <Route path="/get_order" element={<Orders userId='7sjkdzii9fpk9wlvimul3' />} />
-      <Route path="/trade_view" element={<TradeView/>} />
-      <Route path="/balance" element={<Account userId='7sjkdzii9fpk9wlvimul3'/>} />
-    </Routes>
-  </Router>
- 
   )
 }
 

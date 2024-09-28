@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { getTrade } from "../utils/httpClient"
+import { getTrade } from "../../utils/httpClient"
 
 export const Trade = ({ symbol }: any) => {
 
