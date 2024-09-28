@@ -8,6 +8,7 @@ import { tickerRouter } from './routes/ticker';
 import { loginRouter } from './routes/login';
 import { signupRouter } from './routes/signup';
 import { authenticateToken } from './utils';
+import { stockStatsRouter } from './routes/stockstats';
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -24,6 +25,7 @@ app.use('/api/v1/login', loginRouter);
 app.use('/api/v1/depth', depthRouter);
 app.use('/api/v1/trade', tradeRouter);
 app.use('/api/v1/ticker', tickerRouter);
+app.use('/api/v1/stockStats', stockStatsRouter);
 
 // app.use(authenticateToken);
 

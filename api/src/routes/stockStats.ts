@@ -1,24 +1,25 @@
 import { Router } from "express";
-import { GET_CURRENTPRICE, GET_TICKER } from "../types";
+import { GET_CURRENTPRICE, GET_DAILY_STOCK_STATS, GET_TICKER } from "../types";
 import { RabbitMqManager } from "../RabbitMqManager";
-export const tickerRouter = Router();
+export const stockStatsRouter = Router();
 
-tickerRouter.get('/', async (req, res) => {
-    const symbol = req.query.symbol
-    console.log(symbol);
+stockStatsRouter.get('/', async (req, res) => {
+    const symbols = req.query.symbol as string
+    const symbols_arr = symbols.split(',').map(e  => e.trim());
+    console.log(symbols);
     const rabbitMqManager = new RabbitMqManager();
     await rabbitMqManager.connect();
     const response = await rabbitMqManager.queryDb({
-        type: GET_TICKER,
+        type: GET_DAILY_STOCK_STATS,
         data: {
-            symbol: symbol as string
+            symbols : symbols_arr
         }
     })
 
     res.send(JSON.parse(response));
 })
 
-tickerRouter.get('/currentPrice', async (req, res) => {
+stockStatsRouter.get('/currentPrice', async (req, res) => {
     const symbol = req.query.symbol
     console.log(symbol);
     const rabbitMqManager = new RabbitMqManager();
@@ -29,7 +30,6 @@ tickerRouter.get('/currentPrice', async (req, res) => {
             symbol: symbol as string
         }
     })
-
-
+    
     res.send(JSON.parse(response));
 })

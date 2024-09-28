@@ -8,6 +8,11 @@ export const ADD_BALANCE = "ADD_BALANCE"
 export const LOGIN = "LOGIN"
 export const SIGNUP = "SIGNUP"
 export const GET_TICKER = "GET_TICKER"
+export const GET_CURRENTPRICE = "GET_CURRENTPRICE"
+export const GET_STOCK_BALANCE = "GET_STOCK_BALANCE"
+export const GET_DAILY_STOCK_STATS = "GET_DAILY_STOCK_STATS"
+export const GET_DAILY_STOCKS_STATS = "GET_DAILY_STOCKS_STATS"
+
 
 export const ORDER_PALACED = "ORDER_PALACED"
 export const ORDER_CANCLED = "ORDER_CANCLED"
@@ -44,6 +49,13 @@ export type messageToEngine = {
     data: {
         userId: string,
         amount: string,
+    }
+} | {
+} | {
+    type: typeof GET_STOCK_BALANCE,
+    data: {
+        userId: string,
+        symbol: string,
     }
 } | {
     type: typeof GET_ORDER,
@@ -89,6 +101,11 @@ export type messageFromEngine = {
 } | {
     type: typeof GET_ORDER,
     data: order[]
+} | {
+    type: typeof GET_CURRENTPRICE,
+    data: {
+        symbol: string,
+    }
 }
 
 
@@ -127,5 +144,15 @@ export type messageToDb = {
     type: typeof GET_TICKER,
     data: {
         symbol: string,
+    }
+} | {
+    type: typeof GET_DAILY_STOCK_STATS,
+    data: {
+        symbols: string[];
+    }
+} | {
+    type: typeof GET_DAILY_STOCKS_STATS,
+    data: {
+        symbols: string[];
     }
 }
