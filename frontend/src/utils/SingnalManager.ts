@@ -25,8 +25,6 @@ export class SingnalManager {
 
     private init() {
         this.ws.onopen = () => {
-            console.log('ws open');
-
             this.initialized = true;
             this.bufferedMsg.forEach((msg: any) => {
                 this.ws.send(JSON.stringify(msg))
@@ -36,13 +34,9 @@ export class SingnalManager {
 
         this.ws.onmessage = (event) => {
             const msg = JSON.parse(event.data);
-            console.log(msg);
             if (this.callbackMap.get(msg.stream)) {
                 const callbacks = this.callbackMap.get(msg.stream)
-                console.log(callbacks);
-
                 callbacks.forEach((ele : any) => ele.callback(msg.data));
-                console.log('data from ws if');
             }
         }
     }
@@ -66,9 +60,7 @@ export class SingnalManager {
 
     deregisterCallback(type: string, id : string) {
         if (this.callbackMap.get(type)) {
-            console.log(type);
             const ind = this.callbackMap[type]?.findIndex((callback : any)=> callback.id === id);
-            
             if(ind && ind != -1){
                 this.callbackMap[type].splice(ind,1);
             }
@@ -79,7 +71,6 @@ export class SingnalManager {
 
     close() {
         if (this.ws.readyState === WebSocket.OPEN) {
-            console.log('ws close');
             this.ws.close();
         }
     }

@@ -21,11 +21,9 @@ export const CurrentPrice = ({ symbol }: { symbol: string }) => {
     })
 
     const getPriceColor = () => {
-        console.log(prevPrice);
-
         if (prevPrice === '' || currentPrice === '') return "";
         return currentPrice > prevPrice ? "text-green-500" : "text-red-500";
     };
 
-    return <p className={`font-medium text-right w-[30%] text-xl ${getPriceColor()}`}>{currentPrice}</p>
+    return <div className={`font-medium text-right w-[30%] text-2xl ${getPriceColor()}`}>{currentPrice}</div>
 }

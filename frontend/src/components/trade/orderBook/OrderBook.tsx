@@ -61,11 +61,11 @@ export const OrderBook = ({ symbol }: { symbol: string }) => {
     }, [])
     return (
         <>
-            <div className="flex flex-col w-1/4 h-full">
+            <div className="flex flex-col h-full pr-1">
                 <div className="items-center flex-row flex px-1 py-1">
-                    <p className="font-medium text-right w-[30%] text-xl">Price</p>
-                    <p className="font-medium w-[30%] text-right text-xl">Size </p>
-                    <p className="font-medium w-[40%] text-right text-xl">Total</p>
+                    <p className="font-medium text-right w-[30%] text-2xl">Price</p>
+                    <p className="font-medium w-[30%] text-right text-2xl">Size </p>
+                    <p className="font-medium w-[40%] text-right text-2xl">Total</p>
                 </div>
                 <div className="items-center flex-row flex px-1">
                     <Asks asks={asks} />

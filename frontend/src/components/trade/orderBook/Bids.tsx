@@ -38,13 +38,13 @@ const Bid = ({ bid, total_volume }: { bid: [string, string, number], total_volum
                 }}
             ></div>
             <div className="flex items-center flex-row relative h-full w-full overflow-hidden px-3 hover:border-t hover:border-dashed">
-                <p className="z-10 w-[30%] text-right text-green-200 text-xl font-normal tabular-nums">
+                <p className="z-10 w-[30%] text-right text-lime-500 text-2xl font-normal tabular-nums">
                     {Number(bid[0]).toFixed(2)}
                 </p>
-                <p className="z-10 w-[30%] text-right text-xl font-normal tabular-nums">
+                <p className="z-10 w-[30%] text-right text-2xl font-normal tabular-nums">
                     {bid[1]}
                 </p>
-                <p className="z-10 w-[40%] text-right text-xl font-normal tabular-nums">
+                <p className="z-10 w-[40%] text-right text-2xl font-normal tabular-nums">
                     {bid[2]}
                 </p>
             </div>

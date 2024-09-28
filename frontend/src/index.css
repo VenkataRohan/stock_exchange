@@ -25,6 +25,15 @@ body,
   -moz-osx-font-smoothing: grayscale;
 } 
 
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
 /* .App {
   margin: 0;
   height: 100%;

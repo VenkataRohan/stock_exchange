@@ -15,8 +15,6 @@ export function TradeView({
   
   const wsCallBack =(data : any)=>{
     if(chartManagerRef.current){
-      console.log(data);
-      
       chartManagerRef.current.update(Number(data.p))
     }
   }
@@ -32,7 +30,6 @@ export function TradeView({
         if (chartManagerRef.current) {
           chartManagerRef.current.destroy();
         }
-        console.log(klineData)
         const chartManager = new ChartManager(
           chartRef.current,
           klineData,
@@ -58,7 +55,8 @@ export function TradeView({
 
   return (
     <>
-      <div ref={chartRef} style={{ height: "550px", width: "100%", marginTop: 4 }}></div>
+      <div className="h-[750px] w-full" ref={chartRef}></div>
+      {/* <div className="h-[550px] w-full mt-4" ref={chartRef} style={{ height: "550px", width: "100%", marginTop: 4 }}></div> */}
     </>
   );
 }

@@ -67,15 +67,16 @@ export function PlaceOrder({ userId, setOrderStatus }: any) {
   }
 
   return <>
-    <div className="flex flex-col gap-4 px-6 ">
-      <div className="border-y border-solid">
+   <div className="border-y border-slate-200	">
         <div className="flex flex-row gap-1 justify-between items-center">
-          <button className={`font-semibold text-lime-500	 text-xl w-full focus:ring-red-500 ${side === 'Bid' ? 'bg-green-900' : ''} focus:outline-none hover:opacity-80 disabled:opacity-80 disabled:hover:opacity-80 text-center h-12 rounded-xl text-base px-4 py-1`}
+          <button className={`font-semibold text-lime-500	 text-xl w-full focus:ring-red-500 ${side === 'Bid' ? 'bg-green-900' : ''} focus:outline-none hover:opacity-80 disabled:opacity-80 disabled:hover:opacity-80 text-center h-14 text-base px-4 py-2`}
             onClick={() => setSide('Bid')} >Buy</button>
-          <button className={`font-semibold text-red-500  text-xl w-full ${side === 'Ask' ? 'bg-pink-900' : ''} focus:ring-red-500 focus:outline-none hover:opacity-80 disabled:opacity-80 disabled:hover:opacity-80 text-center  h-12 rounded-xl text-base px-4 py-1`}
+          <button className={`font-semibold text-red-500  text-xl w-full ${side === 'Ask' ? 'bg-pink-900' : ''} focus:ring-red-500 focus:outline-none hover:opacity-80 disabled:opacity-80 disabled:hover:opacity-80 text-center  h-14  text-base px-4 py-2`}
             onClick={() => setSide('Ask')} >Sell</button>
         </div>
       </div>
+    <div className="flex flex-col gap-4 px-6 py-3 ">
+     
       <div className="flex flex-row gap-1 justify-between items-center">
         {side === 'Bid' && <>  <p className="text-s font-normal">Available Balance </p>
           <p className="text-2xl font-bold">{balance} </p></>}

@@ -42,28 +42,28 @@ export const DisplayPrice = ({ symbol }: { symbol: string }) => {
     }
 
     return (
-        <div className=" border-y border-solid">
+        <div className=" border-y border-slate-200">
             <div className="flex flex-row justify-start gap-10 mx-4">
                 <div className="flex flex-col justify-center">
-                    <div className="font-normal text-lg text-zinc-400">Symbol</div>
-                    <p className="font-semibold text-left text-lg ">{symbol}</p>
+                    <div className="font-normal text-xl text-zinc-400">Symbol</div>
+                    <div className="font-semibold text-left text-2xl ">{symbol}</div>
                 </div>
                 <div className="flex flex-col justify-center">
-                    <div className="font-normal text-lg text-zinc-400"> Current Price </div>
-                    <p className="font-semibold text-left text-lg "><CurrentPrice symbol={symbol} /></p>
+                    <div className="font-normal text-xl text-zinc-400"> Current Price </div>
+                    <div className="font-semibold text-left text-2xl "><CurrentPrice symbol={symbol} /></div>
                 </div>
                 <div className="flex flex-col justify-center">
-                    <div className="font-normal text-lg text-zinc-400">24H Change</div>
-                    <p className={`font-semibold text-left text-lg ${getChange() != '0.00' ? Number(getChange()) > 0 ? 'text-green-500' : 'text-pink-500' : ''} `}>{getChange()}</p>
+                    <div className="font-normal text-lx text-zinc-400">24H Change</div>
+                    <div className={`font-semibold text-left text-2xl ${getChange() != '0.00' ? Number(getChange()) > 0 ? 'text-green-500' : 'text-pink-500' : ''} `}>{getChange()}</div>
                 </div>
 
                 <div className="flex flex-col justify-center">
-                    <div className="font-normal text-lg text-zinc-400">24H High</div>
-                    <p className="font-semibold text-left text-lg ">{data && data.high_price ? data.high_price : '0.00'}</p>
+                    <div className="font-normal text-xl text-zinc-400">24H High</div>
+                    <div className="font-semibold text-left text-2xl ">{data && data.high_price ? data.high_price : '0.00'}</div>
                 </div>
                 <div className="flex flex-col justify-center">
-                    <p className="font-normal text-lg text-zinc-400">24H Low</p>
-                    <p className="font-semibold text-left text-lg ">{data && data.low_price ? data.low_price : '0.00'}</p>
+                    <div className="font-normal text-xl text-zinc-400">24H Low</div>
+                    <div className="font-semibold text-left text-2xl ">{data && data.low_price ? data.low_price : '0.00'}</div>
                 </div>
                 {/* <div className="flex flex-col justify-center">
                     <p className="font-semibold text-lg">24H Volume</p>

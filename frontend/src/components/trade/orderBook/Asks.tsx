@@ -38,13 +38,13 @@ const Ask = ({ ask, total_volume }: { ask: [string, string, number], total_volum
                 }}
             ></div>
             <div className="flex items-center flex-row relative h-full w-full overflow-hidden px-3 hover:border-t hover:border-dashed">
-                <p className="z-10 w-[30%] text-right text-xl text-red-200 font-normal tabular-nums">
+                <p className="z-10 w-[30%] text-right text-2xl text-pink-500 font-normal tabular-nums">
                     {Number(ask[0]).toFixed(2)}
                 </p>
-                <p className="z-10 w-[30%] text-right text-xl font-normal tabular-nums">
+                <p className="z-10 w-[30%] text-right text-2xl font-normal tabular-nums">
                     {ask[1]}
                 </p>
-                <p className="z-10 w-[40%] text-right text-xl font-normal tabular-nums">
+                <p className="z-10 w-[40%] text-right text-2xl font-normal tabular-nums">
                     {ask[2]}
                 </p>
             </div>
