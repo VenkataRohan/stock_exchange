@@ -8,6 +8,7 @@ export const TRADE_ADDED = "TRADE_ADDED"
 export const PRICE_UPDATED = "PRICE_UPDATED"
 export const GET_STOCK_BALANCE = "GET_STOCK_BALANCE"
 export const GET_CURRENTPRICE = "GET_CURRENTPRICE"
+export const GET_ALL_STOCK_BALANCE = "GET_ALL_STOCK_BALANCE"
 
 export const ORDER_PALACED = "ORDER_PALACED"
 export const ORDER_CANCLED = "ORDER_CANCLED"
@@ -52,6 +53,12 @@ export type messageFromApi = {
     data: {
         userId: string,
         symbol: string,
+    }
+} | {
+    type: typeof GET_ALL_STOCK_BALANCE,
+    data: {
+        userId: string,
+        symbols: string[],
     }
 } | {
     type: typeof GET_ORDER,
@@ -116,6 +123,14 @@ export type messageToApi = {
         [symbol: string]: string
     }
 } | {
+    type: typeof GET_ALL_STOCK_BALANCE,
+    data: {
+        symbol: string,
+        available_quantity: string,
+        avg_price: string,
+        current_price: string
+    }[]
+} | {
     type: typeof GET_CURRENTPRICE,
     data: {
         price: string,
@@ -166,9 +181,13 @@ export type userBalances = {
     }
 }
 
+export type sideType = order & {
+    ts: string
+}
+
 export type orderbook = {
-    asks: order[];
-    bids: order[];
+    asks: sideType[];
+    bids: sideType[];
     currentPrice: string
 }
 

@@ -248,14 +248,14 @@
     },
     "q1qm83f33jhkar6jxevdx2": {
       "balance": {
-        "available": "5000",
+        "available": "8000",
         "locked": 4003.6
       },
       "stocks": {
         "TATA": [
           {
             "id": "s9p8fa17wmfhlqhomiv4ei",
-            "quantity": 0,
+            "quantity": 5,
             "locked": 4,
             "price": "1000.8",
             "ts": "2024-09-21T18:50:23.647Z"
@@ -661,7 +661,7 @@
             "id": "etirwukgpvi0iopx9faajtf",
             "quantity": 20,
             "locked": 1,
-            "price": "1000.8",
+            "price": "1000.7",
             "ts": "2024-09-20T07:56:56.480Z"
           }
         ]

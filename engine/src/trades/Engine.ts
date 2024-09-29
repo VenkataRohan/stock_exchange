@@ -1,6 +1,7 @@
+
 import * as fs from 'fs';
 
-import { order, userBalances, orderbookType, fills, messageFromApi, GET_STOCK_BALANCE, CREATE_ORDER, GET_BALANCE, ADD_BALANCE, GET_DEPTH, messageToApi, DEPTH, ORDER_PALACED, ERROR, GET_ORDER, CANCEL_ORDER, ORDER_CANCLED, TRADE_ADDED, GET_CURRENTPRICE } from '../types'
+import { order, userBalances, orderbookType, fills, messageFromApi, GET_ALL_STOCK_BALANCE, GET_STOCK_BALANCE, CREATE_ORDER, GET_BALANCE, ADD_BALANCE, GET_DEPTH, messageToApi, DEPTH, ORDER_PALACED, ERROR, GET_ORDER, CANCEL_ORDER, ORDER_CANCLED, TRADE_ADDED, GET_CURRENTPRICE, sideType } from '../types'
 import { combineArrayDepth, combineUpdatedArr, roundTwoDecimal } from '../utils';
 import { matchBids, matchAsks } from '../utils/orderbook';
 import { RabbitMqManager } from '../RabbitMqManager';
@@ -19,8 +20,8 @@ export class Engine {
         console.log(this.balances);
     }
 
-    getOrders(userId: string): order[] {
-        const res: any = [];
+    getOrders(userId: string): sideType[] {
+        const res: sideType[] = [];
         Object.keys(this.orderbooks).forEach((mar) => {
             const market = this.orderbooks[mar]
             market.bids.forEach((bid) => {
@@ -47,7 +48,7 @@ export class Engine {
     }
 
     addUserBalance(userId: string, amount: string) {
-        this.balances[userId].balance.available = (Number(this.balances[userId].balance.available) + Number(amount)).toString();
+        this.balances[userId].balance.available = roundTwoDecimal(Number(this.balances[userId].balance.available) + Number(amount)).toString();
         return this.balances[userId];
     }
 
@@ -58,6 +59,31 @@ export class Engine {
                 balance: this.balances[userId].balance.available,
                 [symbol]: this.balances[userId].stocks[symbol].reduce((sum, ele) => sum + ele.quantity, 0).toString()
             }
+        }
+    }
+
+    getAllStockBalance(userId: string): messageToApi {
+        const sym_data: {
+            symbol: string,
+            available_quantity: string,
+            avg_price: string,
+            current_price: string
+        }[] = []
+
+        if (this.balances[userId]) {
+            Object.keys(this.balances[userId].stocks).forEach((symbol) => {
+                sym_data.push({
+                    symbol: symbol,
+                    available_quantity: this.balances[userId].stocks[symbol].reduce((sum, ele) => sum + ele.quantity, 0).toString(),
+                    avg_price: roundTwoDecimal(this.balances[userId].stocks[symbol].reduce((sum, ele) => roundTwoDecimal(sum + (Number(ele.price) * (Number(ele.quantity) + Number(ele.locked)))), 0) / (this.balances[userId].stocks[symbol].reduce((sum, ele) => sum + (Number(ele.quantity) + Number(ele.locked)), 0))).toString(),
+                    current_price: this.orderbooks[symbol].currentPrice
+                })
+            })
+        }
+
+        return {
+            type: GET_ALL_STOCK_BALANCE,
+            data: sym_data
         }
     }
 
@@ -80,6 +106,8 @@ export class Engine {
                     return { type: ADD_BALANCE, data: this.addUserBalance(message.data.userId, message.data.amount) };
                 case GET_STOCK_BALANCE:
                     return await this.getStockBalance(message.data.userId, message.data.symbol)
+                case GET_ALL_STOCK_BALANCE:
+                    return await this.getAllStockBalance(message.data.userId);
                 case GET_CURRENTPRICE:
                     return await this.getCurrentPrice(message.data.symbol);
                 default:
@@ -125,9 +153,9 @@ export class Engine {
         var ind = 0, available_quantity = 0, len = stock.length;
         while (ind < len && available_quantity < Number(quantity)) {
             var val = Math.min(stock[ind].quantity, Number(quantity) - available_quantity)
-            available_quantity += val
-            stock[ind].quantity -= val
-            stock[ind].locked += val
+            available_quantity = roundTwoDecimal(available_quantity + val)
+            stock[ind].quantity = roundTwoDecimal(stock[ind].quantity - val)
+            stock[ind].locked = roundTwoDecimal(stock[ind].locked + val)
 
             const ord: order = {
                 orderType: 'Limit',
@@ -240,8 +268,8 @@ export class Engine {
             const user_stock = this.balances[order.userId].stocks[symbol];
             for (var ind = 0; ind < user_stock.length && remainingQty > 0; ind++) {
                 var val = Math.min(user_stock[ind].locked, remainingQty);
-                user_stock[ind].locked -= val;
-                user_stock[ind].quantity += val
+                user_stock[ind].locked = roundTwoDecimal(user_stock[ind].locked - val);
+                user_stock[ind].quantity = roundTwoDecimal(user_stock[ind].quantity + val)
                 remainingQty -= val;
             }
             console.log(this.balances[order.userId].stocks[symbol]);
@@ -249,8 +277,8 @@ export class Engine {
             order = this.orderbooks[symbol].bids.splice(orderInd, 1)[0];
             console.log(this.balances[order.userId].balance);
             const remainingPrice = (order.quantity - order.filled) * order.price;
-            this.balances[order.userId].balance.locked = (Number(this.balances[order.userId].balance.locked) - remainingPrice).toString();
-            this.balances[order.userId].balance.available = (Number(this.balances[order.userId].balance.available) + remainingPrice).toString();
+            this.balances[order.userId].balance.locked = roundTwoDecimal(Number(this.balances[order.userId].balance.locked) - remainingPrice).toString();
+            this.balances[order.userId].balance.available = roundTwoDecimal(Number(this.balances[order.userId].balance.available) + remainingPrice).toString();
             console.log(this.balances[order.userId].balance);
 
         }
@@ -310,11 +338,25 @@ export class Engine {
         await RabbitMqManager.getInstance().sendWsUpdates(`ticker@${symbol}`, JSON.stringify(data));
     }
 
+    // public async publishWsOrderUpdates(fills : fills[]) {
+    //     const data = {
+    //         stream: `ticker@${symbol}`,
+    //         data: {
+    //             e: `ticker`,
+    //             s: symbol,
+    //             E: Date.now(),
+    //             p: price
+    //         }
+    //     }
+    //     await RabbitMqManager.getInstance().connect();
+    //     await RabbitMqManager.getInstance().sendWsUpdates(`ticker@${symbol}`, JSON.stringify(data));
+    // }
+
     private updateBalance(fills: fills[], side: 'Bids' | 'Asks') {
         if (side === "Bids") {
             fills.forEach((fill) => {
                 const fillPrice = roundTwoDecimal(fill.price * fill.quantity);
-                this.balances[fill.userId].balance.available = (Number(this.balances[fill.userId].balance.available) + fillPrice).toString();
+                this.balances[fill.userId].balance.available = roundTwoDecimal(Number(this.balances[fill.userId].balance.available) + fillPrice).toString();
                 const user_stock = this.balances[fill.userId].stocks[fill.symbol];
                 var fill_quantity = fill.quantity;
                 for (var ind = 0; ind < user_stock.length; ind++) {
@@ -337,10 +379,10 @@ export class Engine {
         } else {
             fills.forEach((fill) => {
                 const fillPrice = roundTwoDecimal(fill.price * fill.quantity);
-                this.balances[fill.userId].balance.locked = (Number(this.balances[fill.userId].balance.locked) - fillPrice).toString();
+                this.balances[fill.userId].balance.locked = roundTwoDecimal(Number(this.balances[fill.userId].balance.locked) - fillPrice).toString();
                 this.balances[fill.userId].stocks[fill.symbol].push({ id: fill.orderId as string, quantity: fill.quantity, locked: 0, price: fillPrice.toString(), ts: new Date().toISOString() })
 
-                this.balances[fill.otherUserId].balance.available = (Number(this.balances[fill.otherUserId].balance.available) + fillPrice).toString();
+                this.balances[fill.otherUserId].balance.available = roundTwoDecimal(Number(this.balances[fill.otherUserId].balance.available) + fillPrice).toString();
                 const other_user_stock = this.balances[fill.otherUserId].stocks[fill.symbol];
                 var fill_quantity = fill.quantity;
                 for (var ind = 0; ind < other_user_stock.length; ind++) {
@@ -369,10 +411,12 @@ export class Engine {
                     s: symbol,
                     E: Date.now(),
                     p: ele.price,
-                    q: ele.quantity
+                    q: ele.quantity,
                     //todo
-                    // i : orderId
-                    //t : tradeId
+                    i: ele.orderId,
+                    u: ele.userId,
+                    st: ele.status,
+                    o: ele.otherUserId,
                 }
             }
             await RabbitMqManager.getInstance().connect();
@@ -381,17 +425,19 @@ export class Engine {
     }
 
     public async publishWsDepthUpdates(fills: fills[], side: 'Bid' | 'Ask', symbol: string, price: string) {
+        console.log('asdjf ;ldjf asl;dkjf dsljf as;ldjf a;lsdjf ;adlsjf ads;lfja ;lkfsj ');
+
         const depth = this.getDepth(symbol);
         if (side == 'Bid') {
             const updatedasks = combineUpdatedArr(fills, depth.asks);
-            const updatedbids = depth.bids.find(x => x[0] == price)
+            const updatedbids = depth.bids.find(x => x[0] == price);
             const data = {
                 stream: `depth@${symbol}`,
                 data: {
                     e: 'depth',
                     s: symbol,
                     E: Date.now(),
-                    a: updatedasks,
+                    a: updatedasks.map((ele: [string, string][]) => [Number(ele[0]), Number(ele[1])]),
                     b: updatedbids ? [[Number(updatedbids[0]), Number(updatedbids[1])]] : []
                     //todo
                     // i : orderId
@@ -404,12 +450,15 @@ export class Engine {
 
         if (side == 'Ask') {
             const updatedbids = combineUpdatedArr(fills, depth.bids);
-            const updatedasks = depth.asks.find(x => x[0] == price)?.map(x => [Number(x[0]), Number(x[1])]);
+            const updatedasks = depth.asks.find(x => x[0] == price);
+            console.log(updatedasks);
+            console.log(' jafsk;ldfj f alskd;jf dslkjf ;adlfjkd fl');
+
             const data = {
                 stream: `depth@${symbol}`,
                 data: {
                     a: updatedasks ? [[Number(updatedasks[0]), Number(updatedasks[1])]] : [],
-                    b: updatedbids,
+                    b: updatedbids.map((ele: [string, string][]) => [Number(ele[0]), Number(ele[1])]),
                     e: 'depth',
                     s: symbol,
                     E: Date.now()

@@ -60,7 +60,9 @@ export function matchBids(orderbook: orderbook, order: order) {
         excutedtotalprice = roundTwoDecimal(excutedtotalprice + totalprice)
         executedQty += filledQty;
         orderbook.asks[i].filled += filledQty;
-
+        if(orderbook.asks[i].filled != 0){
+            orderbook.asks[i].status = orderbook.asks[i].filled === orderbook.asks[i].quantity ? 'FILLED' : 'PARTIALLY_FILLED'
+        }
         last_traded_price = orderbook.asks[i].price.toString();
         fills.push({
             orderId: orderbook.asks[i].orderId,
@@ -129,6 +131,10 @@ export function matchAsks(orderbook: orderbook, order : order, relavent_orders :
         excutedtotalprice = roundTwoDecimal(excutedtotalprice + totalprice)
         executedQty += filledQty;
         orderbook.bids[i].filled += filledQty;
+        if(orderbook.bids[i].filled != 0){
+            orderbook.bids[i].status = orderbook.bids[i].filled === orderbook.bids[i].quantity ? 'FILLED' : 'PARTIALLY_FILLED'
+        }
+
         last_traded_price = orderbook.bids[i].price.toString();
         fills.push({
             orderId: orderbook.bids[i].orderId,
