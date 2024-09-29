@@ -82,3 +82,10 @@ export type stockStats = {
     low_price: string,
     volume: string,
 }
+
+export type stockBalance = {
+    symbol: string,
+    available_quantity: string,
+    avg_price: string,
+    current_price: string
+}

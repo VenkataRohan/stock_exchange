@@ -1,13 +1,77 @@
 import { useEffect, useState } from "react"
 import { cancelOrder, getOrders } from "../../utils/httpClient"
 import { OrderCard } from "./OrderCard"
-import { order } from "../../types"
+import { WS_TRADE, order } from "../../types"
+import { SingnalManager } from "../../utils/SingnalManager"
 
 export const Orders = ({ userId }: { userId: string }) => {
     const [data, setData] = useState<order[]>([])
+    const wsCallBack = (tradeUpdates: any) => {
+        // const data_exists = data.some(o => {
+        //     console.log(o.orderId);
+        //     console.log(tradeUpdates.i);
+            
+        //     return o.orderId === tradeUpdates.i
+        // })
+        // console.log(data);
+        
+        // console.log(tradeUpdates.i);
+        // console.log(data_exists);
+        
+        // if(data_exists){
+            setData((prev)=>{
+                const vals = [...prev]
+                 
+                return vals.map((order : order) =>{
+                    if(order.orderId === tradeUpdates.i){
+                        return {...order , status : tradeUpdates.st }
+                    }
 
+                    // if(order.orderId === tradeUpdates.data.o){
+                    //     return {...order , status : tradeUpdates.data.st }
+                    // }
+                    return order;
+                })
+            })
+        // }
+    }
     useEffect(() => {
-        getOrders(userId).then(res => setData(res.data))
+        getOrders(userId).then(res => {
+            console.log(res);
+            
+            const symbols = res.data.map((ele: order) => `${WS_TRADE}@${ele.symbol}`);
+            if(symbols.length != 0){
+                const msg = {
+                    "method": "SUBSCRIBE",
+                    "params": symbols,
+                }
+                SingnalManager.getInstance().sendMessages(msg);
+                symbols.forEach((sym : string[]) =>{
+                    console.log(`${WS_TRADE}@${sym}`);
+                    
+                    SingnalManager.getInstance().registerCallback(`${sym}`,wsCallBack , `${WS_TRADE}-${sym}-orderstatus`)
+                })
+            }
+            
+            setData(res.data)
+        })
+
+        return () => {
+            const symbols = data.map((ele: order) => `${WS_TRADE}@${ele.symbol}`);
+            if(symbols.length != 0){
+                const msg = {
+                    "method": "UNSUBSCRIBE",
+                    "params": symbols,
+                }
+    
+                symbols.forEach((sym : any) =>{
+                    SingnalManager.getInstance().deregisterCallback(`${sym}`, `${WS_TRADE}-${sym}-orderstatus`);
+                })
+                SingnalManager.getInstance().sendMessages(msg);
+            }
+
+            
+        }
     }, [])
 
     const onSubmit = (id: string, symbol: string) => {

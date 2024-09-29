@@ -8,7 +8,7 @@ export const Bids = ({ bids }: { bids: [string, string][] }) => {
 
     return (
         <div className="flex justify-end h-full w-full flex-col">
-            {bids_volume.map((bid: [string, string, number]) => <Bid bid={bid} total_volume={total_volume} />)}
+            {bids_volume.map((bid: [string, string, number], index : number) => <Bid key = {index} bid={bid} total_volume={total_volume} />)}
         </div>
     )
 }

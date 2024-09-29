@@ -102,7 +102,7 @@ export function PlaceOrder({ userId, setOrderStatus }: any) {
       <div className="flex flex-col gap-1">
         <p className="text-lg font-normal">Order Value</p>
         <div className="flex flex-col relative">
-          <input disabled placeholder="0" value={Number(quantity) * Number(price)}
+          <input disabled placeholder="0" value={(Number(quantity) * Number(price)).toFixed(2)}
             className="h-14 rounded-lg border-4 border-solid pr-3 text-right text-3xl ring-0 transition focus:border-accentBlue focus:ring-0 disabled:bg-black disabled:text-white disabled:border-gray-300"
             type="text" />
         </div>

@@ -9,7 +9,7 @@ export const Asks = ({ asks }: { asks: [string, string][] }) => {
 
     return (
         <div className="flex justify-end h-full w-full flex-col-reverse">
-            {asks_volume.map((ask: [string, string, number]) => <Ask ask={ask} total_volume={total_volume} />)}
+            {asks_volume.map((ask: [string, string, number], index : number ) => <Ask key ={index} ask={ask} total_volume={total_volume} />)}
         </div>
     )
 }

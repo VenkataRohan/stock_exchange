@@ -6,6 +6,7 @@ import { Account } from './components/account/Account';
 import { Orders } from './components/order/Orders';
 import { TradeView } from "./components/trade/TradeView"
 import { Navbar } from './components/Navbar';
+import { Markets } from './components/Markets';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -81,8 +82,9 @@ function App() {
       
         {/* <Route path="/" element={<Home />} /> */}
         <Route path="/" element={<Home userId='7sjkdzii9fpk9wlvimul3' />} />
+        <Route path="/markets" element={<Markets />} />
         <Route path="/get_order" element={<Orders userId='7sjkdzii9fpk9wlvimul3' />} />
-        <Route path="/trade_view" element={<TradeView />} />
+        <Route path="/trade_view" element={<TradeView symbol='TATA' />} />
         <Route path="/balance" element={<Account userId='7sjkdzii9fpk9wlvimul3' />} />
       </Routes>
     </Router>

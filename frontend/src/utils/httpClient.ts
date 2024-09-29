@@ -81,6 +81,17 @@ export const getStockBalance = async (userId: string, symbol: string) => {
   return res.data;
 }
 
+export const getAllStockBalance = async (userId: string) => {
+  const res = await axios.post(`${BASE_URL}/account/all_stock_balance`, { userId: userId}, {
+    headers: {
+      //   'Authorization': 'Bearer ', 
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+  });
+  return res.data;
+}
+
 
 export const getOrders = async (userId: string): Promise<messageFromApi> => {
   const res = await axios.get(`${BASE_URL}/order?userId=${userId}`, {

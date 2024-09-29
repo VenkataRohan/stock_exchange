@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { addBalance, getBalance } from "../../utils/httpClient"
 import { BalanceCard } from "./BalanceCard"
+import { StockBalance } from "./StockBalance"
 
 export const Account = ({ userId }: { userId: string }) => {
     const [data, setData] = useState<any>()
@@ -16,9 +17,14 @@ export const Account = ({ userId }: { userId: string }) => {
     }, [])
 
     return (
-        <div className="flex flex-col justify-around">
-            <BalanceCard balance={data && data.data && data.data.balance ? data.data.balance.available : 0} onSubmit={onSubmit} />
-        </div>
+        <>
+            <div className="flex flex-col justify-around">
+                <BalanceCard balance={data && data.data && data.data.balance ? data.data.balance.available : 0} onSubmit={onSubmit} />
+            </div>
+            <div className="flex flex-col items-center">
+                <StockBalance userId={userId} />
+            </div>
+        </>
     )
 }
 
