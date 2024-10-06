@@ -5,6 +5,7 @@ export const SIGNUP = "SIGNUP"
 export const GET_TICKER = "GET_TICKER"
 export const GET_DAILY_STOCK_STATS = "GET_DAILY_STOCK_STATS"
 export const GET_DAILY_STOCKS_STATS = "GET_DAILY_STOCKS_STATS"
+export const GET_COMPLETE_BALANCES = "GET_COMPLETE_BALANCES"
 
 export type order = {
     orderId?: string,
@@ -63,6 +64,9 @@ export type messageFromApi = {
     data: {
         symbols: string[];
     }
+} | {
+    type: typeof GET_COMPLETE_BALANCES,
+    data: {}
 }
 
 

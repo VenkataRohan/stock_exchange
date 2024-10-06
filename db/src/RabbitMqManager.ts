@@ -1,5 +1,5 @@
 import { Channel, Connection, Replies, connect } from 'amqplib';
-import { GET_TRADE, LOGIN, TRADE_ADDED, fills, messageFromApi, messageFromEngine, GET_DAILY_STOCKS_STATS, SIGNUP, GET_TICKER, ticker, GET_DAILY_STOCK_STATS } from './types';
+import { GET_TRADE, LOGIN, TRADE_ADDED, fills, messageFromApi, messageFromEngine, GET_COMPLETE_BALANCES,GET_DAILY_STOCKS_STATS, SIGNUP, GET_TICKER, ticker, GET_DAILY_STOCK_STATS } from './types';
 import prisma from './prisma';
 import { Prisma } from '@prisma/client';
 
@@ -70,6 +70,8 @@ export class RabbitMqManager {
                 return await this.getTicker(message.data);
             case GET_DAILY_STOCK_STATS:
                 return await this.getDailyStockStats(message.data);
+            case GET_COMPLETE_BALANCES:
+                return await this.getCompleteBalance();    
             default:
                 break;
         }
@@ -132,12 +134,12 @@ export class RabbitMqManager {
             symbol,
             first(price, time) AS opening_price,  
             last(price, time) AS closing_price,   
-            max(price) AS high_price,             
-            min(price) AS low_price,              
+            max(CAST("price" AS FLOAT)) AS high_price,             
+            min(CAST("price" AS FLOAT)) AS low_price,              
             COUNT(*) AS volume                    
         FROM stock
-        WHERE time >= now()::date                
-        AND symbol = ANY(${symbols}) 
+        --WHERE time >= now()::date                
+        WHERE symbol = ANY(${symbols}) 
         GROUP BY symbol` ;
 
         return result.map((ele : any) => ({ ...ele , volume : ele.volume.toString()}))
@@ -150,6 +152,10 @@ export class RabbitMqManager {
                 symbol: symbol
             }
         })
+    }
+
+    private async getCompleteBalance() {
+        return await prisma.userBalance.findMany()
     }
 
     private async getTicker({ symbol }: { symbol: string }) {
@@ -176,7 +182,7 @@ export class RabbitMqManager {
             }
         })
 
-        return user;
+        return user === null ? user : user;
     }
 
     private async signup(message: any) {

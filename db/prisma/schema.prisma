@@ -30,6 +30,7 @@ model User {
   password    String
   trades      Trade[] @relation("UserTrades")
   otherTrades Trade[] @relation("OtherUserTrades")
+  userBalance UserBalance[] @relation("UserBalaces")
 }
 
 enum OrderType {
@@ -67,4 +68,11 @@ model Trade {
 
   @@index([userId])
   @@index([otherUserId])
+}
+
+model UserBalance {
+  userId String @id 
+  data   Json   
+
+  user   User @relation("UserBalaces", fields: [userId], references: [id])
 }
