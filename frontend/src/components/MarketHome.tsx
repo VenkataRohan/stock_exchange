@@ -1,5 +1,3 @@
-import { Login } from "./Login"
-import { Navbar } from "./Navbar"
 import { PlaceOrder } from "./trade/PlaceOrder"
 import { Trade } from "./trade/Trade"
 import { TradeView } from "./trade/TradeView"
@@ -7,7 +5,7 @@ import { OrderBook } from "./trade/orderBook/OrderBook"
 import { DisplayPrice } from './trade/DisplayPrice';
 import { useState } from "react"
 import { OrderStatus } from "./trade/OrderStatus"
-import { Routes, Route, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 export const MarketHome = ({ accessToken  }: {accessToken : string}) => {
     const [orderStatus, setOrderStatus] = useState();

@@ -13,11 +13,11 @@ import { Signup } from './components/Signup';
 // const userId = '035rmc3g8m830vvk04lq4pvg'
 
 function App() {
-  const [symbol,setSymbol] = useState('AERONOX');
+  // const [symbol,setSymbol] = useState('AERONOX');
   // const [userId,setUserId] = useState('576syjahp4cs3qkvrfp4j');
   // const [userId,setUserId] = useState('5ny23qr9cp9m561nlbmjja');
   // const [userId,setUserId] = useState('5z4gomfcw4itif3uqpks4');
-  const [userId,setUserId] = useState('5z4gomfcw4itif3uqpks4');
+  // const [userId,setUserId] = useState('5z4gomfcw4itif3uqpks4');
   const [accessToken, setAccessToken] = useState(localStorage.getItem('ACCESS_TOKEN') || '')
 
   useEffect(() => {
