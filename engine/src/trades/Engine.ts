@@ -5,14 +5,17 @@ import { order, userBalances, orderbookType, fills, messageFromApi, GET_ALL_STOC
 import { combineArrayDepth, combineUpdatedArr, roundTwoDecimal } from '../utils';
 import { matchBids, matchAsks } from '../utils/orderbook';
 import { RabbitMqManager } from '../RabbitMqManager';
+import { mm } from './mm';
 
 export class Engine {
     orderbooks: orderbookType = {};
     balances: userBalances
     constructor() {
-        var snapshot = JSON.parse(fs.readFileSync('src/trades/snapshot.json', 'utf8').toString())
+        // var snapshot = JSON.parse(fs.readFileSync('src/trades/snapshot.json', 'utf8').toString())
+        var snapshot = JSON.parse(fs.readFileSync('src/trades/test.json', 'utf8').toString())
         this.orderbooks = snapshot.orderbooks
         this.balances = snapshot.balances;
+        // mm(this)
     }
 
     getOrderbooks() {
@@ -72,6 +75,7 @@ export class Engine {
 
         if (this.balances[userId]) {
             Object.keys(this.balances[userId].stocks).forEach((symbol) => {
+                if(this.balances[userId].stocks[symbol].reduce((sum, ele) => sum + (Number(ele.quantity) + Number(ele.locked)),0)  === 0) return; 
                 sym_data.push({
                     symbol: symbol,
                     available_quantity: this.balances[userId].stocks[symbol].reduce((sum, ele) => sum + ele.quantity, 0).toString(),
@@ -91,7 +95,7 @@ export class Engine {
         try {
             switch (message.type) {
                 case CREATE_ORDER:
-                    return await this.createOrder({ ...message.data, price: Number(message.data.price), quantity: Number(message.data.quantity), filled: 0, status: 'NEW' });
+                    return await this.createOrder({ ...message.data, price: Math.round(Number(message.data.price)*100)/100, quantity: Number(message.data.quantity), filled: 0, status: 'NEW' });
                 case CANCEL_ORDER:
                     //@ts-ignore
                     return await this.cancelOrder(message.data.orderId, message.data.symbol);
@@ -191,16 +195,16 @@ export class Engine {
                 await this.publishWsTickerUpdates(this.orderbooks[order.symbol].currentPrice, order.symbol);
             }
             await this.publishWsTradesUpdates(res.fills, order.symbol);
-            console.log(res);
-            console.log(order.userId);
-            console.log(JSON.stringify((this.balances[order.userId])));
+            // console.log(res);
+            // console.log(order.userId);
+            // console.log(JSON.stringify((this.balances[order.userId])));
             this.updateBalance(res.fills, 'Bids');
-            console.log("after update");
-            console.log(JSON.stringify((this.balances[order.userId])));
-            res.fills.forEach((ele) => {
-                console.log(ele.userId);
-                console.log(JSON.stringify(this.balances[ele.userId]));
-            })
+            // console.log("after update");
+            // console.log(JSON.stringify((this.balances[order.userId])));
+            // res.fills.forEach((ele) => {
+            //     console.log(ele.userId);
+            //     console.log(JSON.stringify(this.balances[ele.userId]));
+            // })
             const resp: messageToApi = {
                 type: ORDER_PALACED,
                 data: {
@@ -218,7 +222,9 @@ export class Engine {
 
         } else {
             const relavent_orders = this.checkBalanceAndLockstock(order.userId, order.quantity.toString(), order.symbol, order.price)
-
+            console.log(order.price);
+            console.log('order');
+            
             const res = matchAsks(this.orderbooks[order.symbol], order, relavent_orders)
             if (!res) return;
             await this.updateTradeDb(res.fills);
@@ -227,16 +233,16 @@ export class Engine {
                 await this.publishWsTickerUpdates(this.orderbooks[order.symbol].currentPrice, order.symbol);
             }
             await this.publishWsTradesUpdates(res.fills, order.symbol);
-            console.log(res);
-            console.log(order.userId);
-            console.log(JSON.stringify((this.balances[order.userId])));
+            // console.log(res);
+            // console.log(order.userId);
+            // console.log(JSON.stringify((this.balances[order.userId])));
             this.updateBalance(res.fills, 'Asks');
-            console.log("after update");
-            console.log(JSON.stringify((this.balances[order.userId])));
-            res.fills.forEach((ele) => {
-                console.log(ele.userId);
-                console.log(JSON.stringify(this.balances[ele.userId]));
-            })
+            // console.log("after update");
+            // console.log(JSON.stringify((this.balances[order.userId])));
+            // res.fills.forEach((ele) => {
+            //     console.log(ele.userId);
+            //     console.log(JSON.stringify(this.balances[ele.userId]));
+            // })
 
             const resp: messageToApi = {
                 type: ORDER_PALACED,
@@ -263,7 +269,7 @@ export class Engine {
 
             if (orderInd === -1) throw new Error('No order with order id : ' + orderId);
             order = this.orderbooks[symbol].asks.splice(orderInd, 1)[0];
-            console.log(this.balances[order.userId].stocks[symbol]);
+            // console.log(this.balances[order.userId].stocks[symbol]);
             var remainingQty = order.quantity - order.filled;
             const user_stock = this.balances[order.userId].stocks[symbol];
             for (var ind = 0; ind < user_stock.length && remainingQty > 0; ind++) {
@@ -272,14 +278,14 @@ export class Engine {
                 user_stock[ind].quantity = roundTwoDecimal(user_stock[ind].quantity + val)
                 remainingQty -= val;
             }
-            console.log(this.balances[order.userId].stocks[symbol]);
+            // console.log(this.balances[order.userId].stocks[symbol]);
         } else {
             order = this.orderbooks[symbol].bids.splice(orderInd, 1)[0];
-            console.log(this.balances[order.userId].balance);
+            // console.log(this.balances[order.userId].balance);
             const remainingPrice = (order.quantity - order.filled) * order.price;
             this.balances[order.userId].balance.locked = roundTwoDecimal(Number(this.balances[order.userId].balance.locked) - remainingPrice).toString();
             this.balances[order.userId].balance.available = roundTwoDecimal(Number(this.balances[order.userId].balance.available) + remainingPrice).toString();
-            console.log(this.balances[order.userId].balance);
+            // console.log(this.balances[order.userId].balance);
 
         }
         //@ts-ignore
@@ -302,6 +308,9 @@ export class Engine {
 
     private async updateTradeDb(fills: fills[]) {
         fills.forEach(async (fill) => {
+            if(fill.userId === 'MMASK1' || fill.userId === 'MMBIDS1'){
+                return;
+            }
             await RabbitMqManager.getInstance().connect();
             await RabbitMqManager.getInstance().sendDbUpdates(TRADE_ADDED, JSON.stringify({ type: TRADE_ADDED, data: fill }));
         })
@@ -425,8 +434,6 @@ export class Engine {
     }
 
     public async publishWsDepthUpdates(fills: fills[], side: 'Bid' | 'Ask', symbol: string, price: string) {
-        console.log('asdjf ;ldjf asl;dkjf dsljf as;ldjf a;lsdjf ;adlsjf ads;lfja ;lkfsj ');
-
         const depth = this.getDepth(symbol);
         if (side == 'Bid') {
             const updatedasks = combineUpdatedArr(fills, depth.asks);
@@ -451,9 +458,6 @@ export class Engine {
         if (side == 'Ask') {
             const updatedbids = combineUpdatedArr(fills, depth.bids);
             const updatedasks = depth.asks.find(x => x[0] == price);
-            console.log(updatedasks);
-            console.log(' jafsk;ldfj f alskd;jf dslkjf ;adlfjkd fl');
-
             const data = {
                 stream: `depth@${symbol}`,
                 data: {

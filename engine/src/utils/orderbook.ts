@@ -56,7 +56,7 @@ export function matchBids(orderbook: orderbook, order: order) {
     for (var i = 0; i < orderbook.asks.length; i++) {
         if (order.price < orderbook.asks[i].price || order.quantity === executedQty) break;
         const filledQty = Math.min(order.quantity - executedQty, orderbook.asks[i].quantity - orderbook.asks[i].filled);
-        const totalprice = filledQty * orderbook.asks[i].price
+        const totalprice = roundTwoDecimal(filledQty * orderbook.asks[i].price)
         excutedtotalprice = roundTwoDecimal(excutedtotalprice + totalprice)
         executedQty += filledQty;
         orderbook.asks[i].filled += filledQty;
@@ -70,7 +70,7 @@ export function matchBids(orderbook: orderbook, order: order) {
             symbol: order.symbol,
             price: orderbook.asks[i].price,
             quantity: orderbook.asks[i].quantity,
-            status : orderbook.bids[i].quantity === filledQty ? 'FILLED' : 'PARTIALLY_FILLED',
+            status : orderbook.asks[i].quantity === filledQty ? 'FILLED' : 'PARTIALLY_FILLED',
             side: orderbook.asks[i].side, // Bid , Ask
             filled: orderbook.asks[i].filled,
             userId: orderbook.asks[i].userId,
@@ -127,7 +127,7 @@ export function matchAsks(orderbook: orderbook, order : order, relavent_orders :
         if (order.price > orderbook.bids[i].price || order.quantity === executedQty) break;
 
         const filledQty = Math.min(order.quantity - executedQty, orderbook.bids[i].quantity - orderbook.bids[i].filled);
-        const totalprice = filledQty * orderbook.bids[i].price
+        const totalprice = roundTwoDecimal(filledQty * orderbook.bids[i].price)
         excutedtotalprice = roundTwoDecimal(excutedtotalprice + totalprice)
         executedQty += filledQty;
         orderbook.bids[i].filled += filledQty;

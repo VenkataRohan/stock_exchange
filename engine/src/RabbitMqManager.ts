@@ -61,7 +61,6 @@ export class RabbitMqManager {
         if (!this.channel || !this.queue) {
             return;
         }
-        console.log(topic);
 
         this.channel.publish('WsUpdates', topic, Buffer.from(msg));
     }
@@ -71,7 +70,6 @@ export class RabbitMqManager {
         if (!this.channel || !this.queue) {
             return;
         }
-        console.log(topic);
 
         this.channel.sendToQueue('db_queue',Buffer.from(msg),{persistent: true})
     }
