@@ -37,9 +37,7 @@ export class SingnalManager {
             console.log(msg);
             
             if (this.callbackMap.get(msg.stream)) {
-                console.log(this.callbackMap.get(msg.stream));
-                console.log("idshfadshf fljkhasdj fhajlskdhf laskjdhfal kjsdfhl");
-                
+                // console.log(this.callbackMap.get(msg.stream));                
                 const callbacks = this.callbackMap.get(msg.stream)
                 callbacks.forEach((ele : any) => ele.callback(msg.data));
             }

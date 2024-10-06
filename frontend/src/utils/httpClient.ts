@@ -3,6 +3,16 @@ import { messageFromApi, order } from '../types';
 
 const BASE_URL = 'http://localhost:3000/api/v1'
 
+export const login = async (email :string , password  : string): Promise<any> => {
+  const res = await axios.post(`${BASE_URL}/login`,{email,password}, {
+    headers: {
+      //   'Authorization': 'Bearer ', 
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+  })
+  return res.data;
+}
 
 export const getDepth = async (symbol: string): Promise<messageFromApi> => {
   const res = await axios.get(`${BASE_URL}/depth?symbol=${symbol}`, {
@@ -59,10 +69,10 @@ export const getStockStats = async (symbol: string): Promise<any> => {
 }
 
 
-export const getBalance = async (userId: string) => {
-  const res = await axios.post(`${BASE_URL}/account/balance`, { userId: userId }, {
+export const getBalance = async (accessToken: string) => {
+  const res = await axios.post(`${BASE_URL}/account/balance`, {}, {
     headers: {
-      //   'Authorization': 'Bearer ', 
+      'Authorization': `Bearer ${accessToken}`, 
       'Content-Type': 'application/json',
       'Accept': 'application/json'
     }
@@ -70,10 +80,10 @@ export const getBalance = async (userId: string) => {
   return res.data;
 }
 
-export const getStockBalance = async (userId: string, symbol: string) => {
-  const res = await axios.post(`${BASE_URL}/account/stock_balance`, { userId: userId, symbol: symbol }, {
+export const getStockBalance = async (accessToken: string, symbol: string) => {
+  const res = await axios.post(`${BASE_URL}/account/stock_balance`, {  symbol: symbol }, {
     headers: {
-      //   'Authorization': 'Bearer ', 
+      'Authorization': `Bearer ${accessToken}`, 
       'Content-Type': 'application/json',
       'Accept': 'application/json'
     }
@@ -81,33 +91,10 @@ export const getStockBalance = async (userId: string, symbol: string) => {
   return res.data;
 }
 
-export const getAllStockBalance = async (userId: string) => {
-  const res = await axios.post(`${BASE_URL}/account/all_stock_balance`, { userId: userId}, {
+export const getAllStockBalance = async (accessToken: string) => {
+  const res = await axios.post(`${BASE_URL}/account/all_stock_balance`, { }, {
     headers: {
-      //   'Authorization': 'Bearer ', 
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    }
-  });
-  return res.data;
-}
-
-
-export const getOrders = async (userId: string): Promise<messageFromApi> => {
-  const res = await axios.get(`${BASE_URL}/order?userId=${userId}`, {
-    headers: {
-      //   'Authorization': 'Bearer ', 
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    }
-  });
-  return res.data;
-}
-
-export const addBalance = async (userId : string ,amount : string) => {
-  const res = await axios.post(`${BASE_URL}/account/add_balance`, { userId, amount }, {
-    headers: {
-      //   'Authorization': 'Bearer ', 
+      'Authorization': `Bearer ${accessToken}`, 
       'Content-Type': 'application/json',
       'Accept': 'application/json'
     }
@@ -116,10 +103,10 @@ export const addBalance = async (userId : string ,amount : string) => {
 }
 
 
-export const placeOrder = async (data: order): Promise<order> => {
-  const res = await axios.post(`${BASE_URL}/order`, data, {
+export const getOrders = async (accessToken: string): Promise<messageFromApi> => {
+  const res = await axios.get(`${BASE_URL}/order`, {
     headers: {
-      //   'Authorization': 'Bearer ', 
+      'Authorization': `Bearer ${accessToken}`, 
       'Content-Type': 'application/json',
       'Accept': 'application/json'
     }
@@ -127,10 +114,33 @@ export const placeOrder = async (data: order): Promise<order> => {
   return res.data;
 }
 
-export const cancelOrder = async (data: any) => {
+export const addBalance = async (accessToken : string ,amount : string) => {
+  const res = await axios.post(`${BASE_URL}/account/add_balance`, {  amount }, {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`, 
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+  });
+  return res.data;
+}
+
+
+export const placeOrder = async (order: order , accessToken : string): Promise<order> => {
+  const res = await axios.post(`${BASE_URL}/order`, order, {
+    headers: {
+        'Authorization': `Bearer ${accessToken}`, 
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+  });
+  return res.data;
+}
+
+export const cancelOrder = async (data: { orderId: string, symbol: string }, accessToken : string) => {
   const res = await axios.delete(`${BASE_URL}/order`, {
     headers: {
-      //   'Authorization': 'Bearer ', 
+      'Authorization': `Bearer ${accessToken}`, 
       'Content-Type': 'application/json',
       'Accept': 'application/json'
     },

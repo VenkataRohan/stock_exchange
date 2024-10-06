@@ -4,7 +4,11 @@ export const Asks = ({ asks }: { asks: [string, string][] }) => {
     var total_volume = 0;
     asks.forEach((ask: [string, string]) => {
         total_volume += Number(ask[1]);
-        asks_volume.push([ask[0], ask[1], total_volume])
+        if(ask[0] === '0'){
+            asks_volume.push([ask[0], ask[1], 0])
+        }else{
+            asks_volume.push([ask[0], ask[1], total_volume])
+        }
     })
 
     return (
@@ -31,8 +35,20 @@ const Ask = ({ ask, total_volume }: { ask: [string, string, number], total_volum
                     top: '1px',
                     bottom: '1px',
                     right: '0px',
-                    width: `${(65 * ask[2]) / total_volume}%`,
+                    width: `${(100 * ask[2]) / total_volume}%`,
                     background: 'rgba(253, 75, 78, 0.32)',
+                    transition: 'width 0.4s ease-in-out',
+
+                }}
+            ></div>
+             <div
+                style={{
+                    position: 'absolute',
+                    top: '1px',
+                    bottom: '1px',
+                    right: '0px',
+                    width: `${Number(ask[1])/20}%`,
+                    background: 'red',
                     transition: 'width 0.4s ease-in-out',
 
                 }}

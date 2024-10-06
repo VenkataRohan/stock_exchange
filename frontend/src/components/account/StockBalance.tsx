@@ -3,7 +3,7 @@ import { WS_TICKER, stockBalance } from "../../types";
 import { getAllStockBalance } from "../../utils/httpClient";
 import { SingnalManager } from "../../utils/SingnalManager";
 
-export const StockBalance = ({ userId }: { userId: string }) => {
+export const StockBalance = ({ accessToken }: { accessToken: string }) => {
 
     const [data, setData] = useState<stockBalance[]>([])
 
@@ -21,7 +21,7 @@ export const StockBalance = ({ userId }: { userId: string }) => {
 
     useEffect(() => {
 
-        getAllStockBalance(userId).then((res) => {
+        getAllStockBalance(accessToken).then((res) => {
             const symbols = res.data.map((ele: stockBalance) => `${WS_TICKER}@${ele.symbol}`)
             if (symbols.length != 0) {
                 const msg = {
@@ -69,44 +69,47 @@ export const StockBalance = ({ userId }: { userId: string }) => {
     const diff_pl = Number(total_pl) - Number(total_investment)
 
     return (
-        <div className="overflow-x-auto w-[60%] mt-10 p-5">
+        <div className="overflow-x-auto w-[90%] mt-10 p-5">
+           
+            <table className="min-w-full border-collapse border bg-gray-800 shadow-md rounded-lg mt-5">
+            <caption className="caption-top mb-2">
             <div className="flex flex-row justify-start gap-10">
                 <div className="font-bold text-2xl" >
-                    <div>Total_investment </div>
+                    <div>Total Investment </div>
                     <div className="flex flex-col items-center"> {total_investment} </div>
                 </div>
                 <div className="font-bold text-2xl" >
-                    <div>Current_value </div>
+                    <div>Current Value </div>
                     <div className={`flex flex-col items-center ${diff_pl > 0 ? 'text-green-500' : 'text-pink-500'}`}> {total_pl} </div>
                 </div>
                 <div className=" font-bold text-2xl" >
-                    <div>Profit_Loss </div>
+                    <div>Profit & Loss </div>
                     <div className="flex flex-row">
                         <div className={`flex flex-col items-center ${diff_pl > 0 ? 'text-green-500' : 'text-pink-500'}`}>  {diff_pl.toFixed(2)}</div>
                         <div className={`flex flex-col justify-end text-sm ${diff_pl > 0 ? 'text-green-500' : 'text-pink-500'} `}>({diff_pl > 0 ? '+' : ''}{(percentageChange(total_investment,total_pl)).toFixed(3)}%)</div>
                     </div>
                 </div>
             </div>
-            <table className="min-w-full border-collapse bg-gray-500 shadow-md rounded-lg mt-5">
+  </caption>
                 <thead>
                     <tr className="bg-blue-500 border-b">
-                        <th className="text-left p-4 text-xl font-semibold text-center  text-white">Symbol</th>
-                        <th className="text-left p-4 text-xl font-semibold text-center text-white">Quantity</th>
-                        <th className="text-left p-4 text-xl font-semibold text-center text-white">P&L</th>
-                        <th className="text-left p-4 text-xl font-semibold text-center text-white">Avg Price</th>
-                        <th className="text-left p-4 text-xl font-semibold text-center text-white">Current Price</th>
+                        <th className="text-left p-4 text-xl border font-semibold text-center  text-white">Symbol</th>
+                        <th className="text-left p-4 text-xl font-semibold border text-center text-white">Quantity</th>
+                        <th className="text-left p-4 text-xl font-semibold border text-center text-white">P&L</th>
+                        <th className="text-left p-4 text-xl font-semibold border text-center text-white">Current Price</th>
+                        <th className="text-left p-4 text-xl font-semibold border text-center text-white">Avg Price</th>
                     </tr>
                 </thead>
                 <tbody>
                     {data && data.map((stock, index) => {
                         const pl = getPL(stock.avg_price, stock.current_price);
                         return (
-                            <tr key={index} className="border-b hover:bg-gray-800 transition-colors">
-                                <td className="p-4 text-xl font-bold text-center  text-white">{stock.symbol}</td>
-                                <td className="p-4 text-xl font-bold text-center text-white">{stock.available_quantity}</td>
-                                <td className={`p-4text-xl font-bold text-center  ${pl > 0 ? 'text-green-500' : 'text-pink-800'}`}>{(pl > 0 ? '+' : '')}{pl}({percentageChange(stock.avg_price, stock.current_price).toFixed(3)}%)</td>
-                                <td className="p-4 text-xl font-bold text-center text-white">{stock.avg_price}</td>
-                                <td className="p-4 text-xl font-bold text-center text-white">{stock.current_price}</td>
+                            <tr key={index} className="border-b  hover:bg-gray-900 transition-colors">
+                                <td className="p-4 text-xl font-bold border text-center  text-white">{stock.symbol}</td>
+                                <td className="p-4 text-xl font-bold border text-center text-white">{stock.available_quantity}</td>
+                                <td className={`p-4 text-xl font-bold border text-center  ${pl > 0 ? 'text-green-500' : 'text-pink-500'}`}>{(pl > 0 ? '+' : '')}{pl}<div className="text-sm">({percentageChange(stock.avg_price, stock.current_price).toFixed(3)}%)</div></td>
+                                <td className="p-4 text-xl font-bold border text-center text-white">{stock.current_price}</td>
+                                <td className="p-4 text-xl font-bold border text-center text-white">{stock.avg_price}</td>
                             </tr>
                         )
                     })}

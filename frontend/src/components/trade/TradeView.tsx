@@ -15,6 +15,8 @@ export function TradeView({
   
   const wsCallBack =(data : any)=>{
     if(chartManagerRef.current){
+      console.log();
+      
       chartManagerRef.current.update(Number(data.p))
     }
   }
@@ -23,7 +25,10 @@ export function TradeView({
     const init = async () => {
       let klineData: any
       try {
-        klineData = await getTicker('TATA')
+        klineData = await getTicker(symbol)
+        klineData = klineData.map((e: any)=> ({...e , time : new Date(e.time).toLocaleDateString().split('/').reverse().join('-') }))
+        console.log(klineData.sort((a :any,b : any)=> new Date(a.time).getTime() - new Date(b.time).getTime()));
+        
       } catch (e) { }
 
       if (chartRef) {

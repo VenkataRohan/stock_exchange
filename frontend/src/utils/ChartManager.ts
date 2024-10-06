@@ -44,11 +44,11 @@ export class ChartManager {
       },
       grid: {
         horzLines: {
-          color: '#334158',
+          color: '#0F1A25',
           // visible: false,
         },
         vertLines: {
-          color: '#334158',
+          color: '#0F1A25',
           // visible: false,
         },
       },
@@ -69,7 +69,10 @@ export class ChartManager {
       wickDownColor: '#838ca1',
       wickUpColor: '#838ca1',
     });
-    this.currentBar = initialData[0]; 
+    this.currentBar = initialData[initialData.length -1]; 
+    console.log('this');
+    console.log(this.currentBar);
+    
     this.candleSeries.setData(initialData);
   }
   public update(updatedPrice: number) {
@@ -80,18 +83,28 @@ export class ChartManager {
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const dd = String(today.getDate()).padStart(2, '0');
     const formattedDate = `${yyyy}-${mm}-${dd}`;
+    console.log(formattedDate);
+    console.log(this.currentBar.time);
+    //@ts-ignore
 
-    if(this.currentBar && this.currentBar.time === formattedDate){
+    
+    //@ts-ignore
+    // if(this.currentBar && (this.currentBar.time === formattedDate || `${this.currentBar.time.year}-${this.currentBar.time.month}-${'0'+this.currentBar.time.day}` === formattedDate )){
+      // console.log("in side if");
+      
       this.currentBar.close = updatedPrice;
       this.currentBar.high = Math.max(this.currentBar.high as number, updatedPrice);
       this.currentBar.low = Math.min(this.currentBar.low as number, updatedPrice);
-    }else{
-      this.currentBar.open = updatedPrice;
-      this.currentBar.close = updatedPrice;
-      this.currentBar.high = updatedPrice;
-      this.currentBar.low = updatedPrice
-      this.currentBar.time = formattedDate;
-    }
+      // this.currentBar.time = this.currentBar.time?.toString() as string
+    // }else{
+    //   console.log("in side else");
+    //   // console.log(`${this.currentBar.time.year}-${this.currentBar.time.month}-${this.currentBar.time.day.toFixed(2)}`);
+    //   this.currentBar.open = updatedPrice;
+    //   this.currentBar.close = updatedPrice;
+    //   this.currentBar.high = updatedPrice;
+    //   this.currentBar.low = updatedPrice
+    //   this.currentBar.time = formattedDate;
+    // }
 
     //@ts-ignore
     this.candleSeries.update(this.currentBar);

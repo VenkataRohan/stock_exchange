@@ -4,7 +4,7 @@ import { OrderCard } from "./OrderCard"
 import { WS_TRADE, order } from "../../types"
 import { SingnalManager } from "../../utils/SingnalManager"
 
-export const Orders = ({ userId }: { userId: string }) => {
+export const Orders = ({ accessToken  }: { accessToken: string  }) => {
     const [data, setData] = useState<order[]>([])
     const wsCallBack = (tradeUpdates: any) => {
         // const data_exists = data.some(o => {
@@ -36,7 +36,7 @@ export const Orders = ({ userId }: { userId: string }) => {
         // }
     }
     useEffect(() => {
-        getOrders(userId).then(res => {
+        getOrders(accessToken).then(res => {
             console.log(res);
             
             const symbols = res.data.map((ele: order) => `${WS_TRADE}@${ele.symbol}`);
@@ -68,26 +68,24 @@ export const Orders = ({ userId }: { userId: string }) => {
                     SingnalManager.getInstance().deregisterCallback(`${sym}`, `${WS_TRADE}-${sym}-orderstatus`);
                 })
                 SingnalManager.getInstance().sendMessages(msg);
-            }
-
-            
+            }            
         }
     }, [])
 
     const onSubmit = (id: string, symbol: string) => {
-        cancelOrder({ orderId: id, symbol: symbol }).then((res) => {
+        cancelOrder({ orderId: id, symbol: symbol } , accessToken).then((res) => {
             console.log(res);
-            getOrders(userId).then(res => setData(res.data))
+            getOrders(accessToken).then(res => setData(res.data))
         })
     }
 
     return (
-        <div>
+        <div className="bg-black">
             <div className="flex flex-col items-center text-4xl">
                 Orders
             </div>
             <div className="grid grid-cols-4 gap-12 mt-2">
-                {data.map((order: order) => <OrderCard symbol='TATA' side={order.side} price={order.price} quantity={order.quantity} status={order['status'] as string} onCancel={() => onSubmit(order.orderId as string, order.symbol)} />)}
+                {data.map((order: order) => <OrderCard symbol = {order.symbol} side={order.side} price={order.price} quantity={order.quantity} status={order['status'] as string} onCancel={() => onSubmit(order.orderId as string, order.symbol)} />)}
             </div>
         </div>
     )

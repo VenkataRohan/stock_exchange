@@ -3,12 +3,16 @@ export const Bids = ({ bids }: { bids: [string, string][] }) => {
     var total_volume = 0;
     bids.forEach((bid: [string, string]) => {
         total_volume += Number(bid[1]);
-        bids_volume.push([bid[0], bid[1], total_volume])
+        if (bid[0] === '0') {
+            bids_volume.push([bid[0], bid[1], 0])
+        } else {
+            bids_volume.push([bid[0], bid[1], total_volume])
+        }
     })
 
     return (
         <div className="flex justify-end h-full w-full flex-col">
-            {bids_volume.map((bid: [string, string, number], index : number) => <Bid key = {index} bid={bid} total_volume={total_volume} />)}
+            {bids_volume.map((bid: [string, string, number], index: number) => <Bid key={index} bid={bid} total_volume={total_volume} />)}
         </div>
     )
 }
@@ -31,8 +35,21 @@ const Bid = ({ bid, total_volume }: { bid: [string, string, number], total_volum
                     top: '1px',
                     bottom: '1px',
                     right: '0px',
-                    width: `${(50 * bid[2]) / total_volume}%`,
+                    width: `${(100 * bid[2]) / total_volume}%`,
                     background: 'rgba(12, 151, 98, 0.16)',
+                    transition: 'width 0.4s ease-in-out',
+
+                }}
+            ></div>
+
+            <div
+                style={{
+                    position: 'absolute',
+                    top: '1px',
+                    bottom: '1px',
+                    right: '0px',
+                    width: `${Number(bid[1])/20}%`,
+                    background: 'green',
                     transition: 'width 0.4s ease-in-out',
 
                 }}

@@ -5,7 +5,7 @@ import { WS_TICKER } from "../../../types";
 
 export const CurrentPrice = ({ symbol }: { symbol: string }) => {
 
-    const [currentPrice, setCurrentPrice] = useState<string>('');
+    const [currentPrice, setCurrentPrice] = useState<string>('0.00');
     const [prevPrice, setPrevPrice] = useState<string>('');
     useEffect(() => {
         const wsTickerCallBack = (data: any) => {
@@ -18,7 +18,7 @@ export const CurrentPrice = ({ symbol }: { symbol: string }) => {
         return () => {
             SingnalManager.getInstance().deregisterCallback(`${WS_TICKER}@${symbol}`, `${WS_TICKER}-${symbol}-orderbook`)
         }
-    })
+    },[symbol])
 
     const getPriceColor = () => {
         if (prevPrice === '' || currentPrice === '') return "";

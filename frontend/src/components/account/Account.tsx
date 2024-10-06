@@ -3,26 +3,29 @@ import { addBalance, getBalance } from "../../utils/httpClient"
 import { BalanceCard } from "./BalanceCard"
 import { StockBalance } from "./StockBalance"
 
-export const Account = ({ userId }: { userId: string }) => {
+export const Account = ({ accessToken }: { accessToken: string }) => {
     const [data, setData] = useState<any>()
 
     const onSubmit = (amount: string) => {
-        addBalance(userId, amount).then(() => {
-            getBalance(userId).then(res => setData(res))
+        addBalance(accessToken, amount).then(() => {
+            getBalance(accessToken).then(res => setData(res))
         })
     }
 
     useEffect(() => {
-        getBalance(userId).then(res => setData(res))
+        getBalance(accessToken).then(res => setData(res))
     }, [])
 
     return (
         <>
-            <div className="flex flex-col justify-around">
+        <div className="flex flex-row justify-around bg-black h-[90%]">
+        <div className="flex flex-col items-center w-2/3 ">
+                <StockBalance accessToken={accessToken} />
+            </div>
+            <div className="flex flex-col justify-center w-1/3 mb-16">
                 <BalanceCard balance={data && data.data && data.data.balance ? data.data.balance.available : 0} onSubmit={onSubmit} />
             </div>
-            <div className="flex flex-col items-center">
-                <StockBalance userId={userId} />
+            
             </div>
         </>
     )

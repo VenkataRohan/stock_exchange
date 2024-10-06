@@ -42,7 +42,7 @@ export const DisplayPrice = ({ symbol }: { symbol: string }) => {
     }
 
     return (
-        <div className=" border-y border-slate-200">
+        <div className=" border-y border-slate-200 h-16">
             <div className="flex flex-row justify-start gap-10 mx-4">
                 <div className="flex flex-col justify-center">
                     <div className="font-normal text-xl text-zinc-400">Symbol</div>

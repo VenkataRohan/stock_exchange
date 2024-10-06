@@ -4,14 +4,14 @@ export const BalanceCard = ({ balance, onSubmit }: any) => {
 
   const [price, setPrice] = useState('')
 
-  return <div className="mt-5 w-[20%] h-full mx-auto bg-green-900 rounded-lg shadow-md overflow-hidden">
+  return <div className=" w-[60%] mx-auto bg-green-900 rounded-lg shadow-md overflow-hidden">
     <div className="p-4">
       <div className="flex justify-between mt-2 items-center">
         <h3 className="text-2xl font-semibold text-grey-400">FUNDS : {balance}</h3>
         <span className=" flex text-white font-bold"></span>
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col mt-2 gap-3">
         <div className="flex flex-col">
           <p className="text-lg font-normal">Amount</p>
           <div className="flex flex-col">

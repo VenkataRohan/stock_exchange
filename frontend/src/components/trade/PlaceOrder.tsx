@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 import { SingnalManager } from "../../utils/SingnalManager";
 import { getStockBalance, placeOrder } from "../../utils/httpClient";
-import { order } from "../../types";
+import { WS_DEPTH, WS_TICKER, WS_TRADE, order } from "../../types";
 
-export function PlaceOrder({ userId, setOrderStatus }: any) {
+export function PlaceOrder({ accessToken, setOrderStatus , symbol }: {accessToken : string , setOrderStatus : any , symbol : string}) {
   const [quantity, setQuantity] = useState('1');
   const [price, setPrice] = useState('1000.8');
   const [balance, setBalance] = useState();
@@ -13,23 +13,23 @@ export function PlaceOrder({ userId, setOrderStatus }: any) {
     const msg = {
       "method": "SUBSCRIBE",
       "params": [
-        "depth@TATA", "ticker@TATA", "trade@TATA"
+        `${WS_DEPTH}@${symbol}`,  `${WS_TICKER}@${symbol}` , `${WS_TRADE}@${symbol}`
       ]
     }
     SingnalManager.getInstance().sendMessages(msg)
 
-    getStockBalance(userId, 'TATA').then(res => {
+    getStockBalance(accessToken, symbol).then(res => {
       console.log(res);
 
       setBalance(res.data.balance);
-      setStock(res.data['TATA'])
+      setStock(res.data[symbol])
     })
 
     return () => {
       const msg = {
         "method": "UNSUBSCRIBE",
         "params": [
-          "depth@TATA", "ticker@TATA", "trade@TATA"
+          `${WS_DEPTH}@${symbol}`,  `${WS_TICKER}@${symbol}` , `${WS_TRADE}@${symbol}`
         ]
       }
       SingnalManager.getInstance().sendMessages(msg)
@@ -38,26 +38,26 @@ export function PlaceOrder({ userId, setOrderStatus }: any) {
   const onSubmit = async () => {
 
 
-    let data: order = {
+    let order: order = {
       orderType: "Limit",
-      symbol: "TATA",
+      symbol: symbol,
       price: price,
       quantity: quantity,
       side: side,
-      userId: userId
+      userId: ''
     };
 
     try {
-      const res: any = await placeOrder(data);
+      const res: any = await placeOrder(order,accessToken);
       console.log(res);
       if (res.type === 'ORDER_PALACED') {
         setOrderStatus('ORDER_PLACED')
       }
-      getStockBalance(userId, 'TATA').then(res => {
+      getStockBalance(accessToken, symbol).then(res => {
         console.log(res);
 
         setBalance(res.data.balance);
-        setStock(res.data['TATA'])
+        setStock(res.data[symbol])
       })
     } catch (error: any) {
       console.log(error.response.data.msg);
@@ -67,11 +67,11 @@ export function PlaceOrder({ userId, setOrderStatus }: any) {
   }
 
   return <>
-   <div className="border-y border-slate-200	">
-        <div className="flex flex-row gap-1 justify-between items-center">
-          <button className={`font-semibold text-lime-500	 text-xl w-full focus:ring-red-500 ${side === 'Bid' ? 'bg-green-900' : ''} focus:outline-none hover:opacity-80 disabled:opacity-80 disabled:hover:opacity-80 text-center h-14 text-base px-4 py-2`}
+   <div className="border-y border-slate-200	h-16">
+        <div className="flex flex-row gap-1 justify-between items-center h-full">
+          <button className={`font-semibold text-lime-500	 text-xl w-full focus:ring-red-500 ${side === 'Bid' ? 'bg-green-900' : ''} focus:outline-none hover:opacity-80 disabled:opacity-80 disabled:hover:opacity-80 text-center h-full text-base px-4 py-2`}
             onClick={() => setSide('Bid')} >Buy</button>
-          <button className={`font-semibold text-red-500  text-xl w-full ${side === 'Ask' ? 'bg-pink-900' : ''} focus:ring-red-500 focus:outline-none hover:opacity-80 disabled:opacity-80 disabled:hover:opacity-80 text-center  h-14  text-base px-4 py-2`}
+          <button className={`font-semibold text-red-500  text-xl w-full ${side === 'Ask' ? 'bg-pink-900' : ''} focus:ring-red-500 focus:outline-none hover:opacity-80 disabled:opacity-80 disabled:hover:opacity-80 text-center  h-full  text-base px-4 py-2`}
             onClick={() => setSide('Ask')} >Sell</button>
         </div>
       </div>
@@ -108,7 +108,7 @@ export function PlaceOrder({ userId, setOrderStatus }: any) {
         </div>
       </div>
       <div className="flex flex-col">
-        <button className="font-semibold text-xl focus:ring-red-500 focus:outline-none hover:opacity-80 disabled:opacity-80 disabled:hover:opacity-80 text-center text-white bg-blue-500 h-12 rounded-xl text-base px-4 py-1"
+        <button className="font-semibold text-xl focus:ring-red-500 focus:outline-none hover:opacity-80  disabled:opacity-80 disabled:hover:opacity-80 text-center text-white bg-blue-500 h-12 rounded-xl text-base px-4 py-1"
           onClick={onSubmit}>{side === 'Bid' ? 'BUY' : 'SELL'}</button>
       </div>
     </div>
