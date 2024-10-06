@@ -13,6 +13,7 @@ export const GET_STOCK_BALANCE = "GET_STOCK_BALANCE"
 export const GET_ALL_STOCK_BALANCE = "GET_ALL_STOCK_BALANCE"
 export const GET_DAILY_STOCK_STATS = "GET_DAILY_STOCK_STATS"
 export const GET_DAILY_STOCKS_STATS = "GET_DAILY_STOCKS_STATS"
+export const GET_COMPLETE_BALANCES = "GET_COMPLETE_BALANCES"
 
 
 export const ORDER_PALACED = "ORDER_PALACED"
@@ -176,4 +177,7 @@ export type messageToDb = {
         avg_price: string,
         current_price: string
     }[]
+} | {
+    type: typeof GET_COMPLETE_BALANCES,
+    data: {}
 }

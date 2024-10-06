@@ -1,28 +1,25 @@
 import { Router } from "express";
 import { CANCEL_ORDER, CREATE_ORDER, GET_ORDER, messageFromEngine } from "../types";
 import { RabbitMqManager } from "../RabbitMqManager";
+import { AuthenticatedRequest } from "../utils";
 
 export const orderRouter = Router()
 
 
-orderRouter.get('/', async (req, res) => {
-    const {userId } = req.query
-    console.log(userId);
-    
+orderRouter.get('/', async (req : AuthenticatedRequest, res) => {    
     const rabbitMqManager = new RabbitMqManager();
     await rabbitMqManager.connect();
     const response : messageFromEngine = JSON.parse(await rabbitMqManager.sendAndAwait({
         type : GET_ORDER,
         data : {
-            userId : userId as string,
+            userId : req.userId,
         }
     }))
     res.json(response);
 })
 
-orderRouter.post('/', async (req, res) => {
-    const { orderType, symbol, price, quantity, side, userId } = req.body
-    console.log(req.body);
+orderRouter.post('/', async (req : AuthenticatedRequest, res) => {
+    const { orderType, symbol, price, quantity, side } = req.body
     const rabbitMqManager = new RabbitMqManager();
     await rabbitMqManager.connect();
     const response : messageFromEngine = JSON.parse(await rabbitMqManager.sendAndAwait({
@@ -33,7 +30,7 @@ orderRouter.post('/', async (req, res) => {
             price,
             quantity,
             side,
-            userId
+            userId : req.userId
         }
     }))
     if(response.type === "ERROR"){
@@ -54,6 +51,5 @@ orderRouter.delete('/', async (req, res) => {
             symbol,
         }
     })
-
     res.json(JSON.parse(response));
 })

@@ -21,7 +21,7 @@ loginRouter.post('/', async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, JSON.parse(response).password);
     if (isMatch) {
-        var token = jwt.sign({ userId: JSON.parse(response).id }, 'shhhhh');
+        var token = jwt.sign({ userId: JSON.parse(response).id }, process.env.JWT_SECRECT as string);
         return res.json({ token });
     }
 
