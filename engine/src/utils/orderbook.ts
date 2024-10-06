@@ -48,7 +48,7 @@ import { roundTwoDecimal, priceUpperBoundAsc, priceUpperBoundDsc, getRandomOrder
 //     }
 // }
 
-export function matchBids(orderbook: orderbook, order: order) {
+export function matchBids(orderbook: orderbook, order: order, completeOrders  : order[]) {
     var executedQty = 0, excutedtotalprice = 0, last_traded_price = orderbook.currentPrice;
     const fills: fills[] = []
     const orderId = getRandomOrderId();
@@ -79,6 +79,7 @@ export function matchBids(orderbook: orderbook, order: order) {
         })
 
         if (orderbook.asks[i].filled == orderbook.asks[i].quantity) {
+            completeOrders.push({...orderbook.asks[i]})
             orderbook.asks.splice(i, 1);
             i--;
         }
@@ -94,7 +95,8 @@ export function matchBids(orderbook: orderbook, order: order) {
             filled: executedQty,
             status : executedQty === 0 ? 'NEW' : 'PARTIALLY_FILLED',
             side: 'Bid',
-            userId: order.userId
+            userId: order.userId,
+            ts : order.ts
         }
         var upperboundInd = priceUpperBoundDsc(order.price, orderbook.bids);
 
@@ -114,14 +116,10 @@ export function matchBids(orderbook: orderbook, order: order) {
 }
 
 
-export function matchAsks(orderbook: orderbook, order : order, relavent_orders : order[]) {
+export function matchAsks(orderbook: orderbook, order : order ,completeOrders : order[]) {
     var executedQty = 0, excutedtotalprice = 0, last_traded_price = orderbook.currentPrice;
     const fills: fills[] = []
     const orderId = getRandomOrderId();
-
-    relavent_orders.forEach(relavent_order => {
-        
-    });
 
     for (var i = 0; i < orderbook.bids.length; i++) {
         if (order.price > orderbook.bids[i].price || order.quantity === executedQty) break;
@@ -151,6 +149,7 @@ export function matchAsks(orderbook: orderbook, order : order, relavent_orders :
         })
 
         if (orderbook.bids[i].filled == orderbook.bids[i].quantity) {
+            completeOrders.push({...orderbook.bids[i]})
             orderbook.bids.splice(i, 1);
             i--;
         }
@@ -166,7 +165,8 @@ export function matchAsks(orderbook: orderbook, order : order, relavent_orders :
             filled: executedQty,
             status : executedQty === 0 ? 'NEW' : 'PARTIALLY_FILLED',
             side: 'Ask',
-            userId: order.userId
+            userId: order.userId,
+            ts : order.ts
         }
         var upperboundInd = priceUpperBoundAsc(order.price, orderbook.asks);
 

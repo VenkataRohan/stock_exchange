@@ -149,7 +149,8 @@ export type order = {
     quantity: number,
     side: 'Bid' | 'Ask', // Bid , Ask
     userId: string,
-    filled: number
+    filled: number,
+    ts : Date
 }
 
 

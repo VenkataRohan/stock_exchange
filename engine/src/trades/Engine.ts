@@ -1,4 +1,3 @@
-
 import * as fs from 'fs';
 
 import { order, userBalances, orderbookType, fills, messageFromApi, GET_ALL_STOCK_BALANCE, GET_STOCK_BALANCE, CREATE_ORDER, GET_BALANCE, ADD_BALANCE, GET_DEPTH, messageToApi, DEPTH, ORDER_PALACED, ERROR, GET_ORDER, CANCEL_ORDER, ORDER_CANCLED, TRADE_ADDED, GET_CURRENTPRICE, sideType } from '../types'
@@ -10,11 +9,13 @@ import { mm } from './mm';
 export class Engine {
     orderbooks: orderbookType = {};
     balances: userBalances
+    completeOrders : order[]
     constructor() {
         // var snapshot = JSON.parse(fs.readFileSync('src/trades/snapshot.json', 'utf8').toString())
         var snapshot = JSON.parse(fs.readFileSync('src/trades/test.json', 'utf8').toString())
         this.orderbooks = snapshot.orderbooks
         this.balances = snapshot.balances;
+        this.completeOrders = [];
         // mm(this)
     }
 
@@ -23,8 +24,8 @@ export class Engine {
         console.log(this.balances);
     }
 
-    getOrders(userId: string): sideType[] {
-        const res: sideType[] = [];
+    getOrders(userId: string): order[] {
+        const res: order[] = [];
         Object.keys(this.orderbooks).forEach((mar) => {
             const market = this.orderbooks[mar]
             market.bids.forEach((bid) => {
@@ -39,6 +40,11 @@ export class Engine {
                 }
             })
         })
+
+        res.push(...this.completeOrders.filter(ord => ord.userId === userId))
+
+        res.sort((a,b)=> new Date(a.ts).getTime() - new Date(b.ts).getTime())
+
         return res;
     }
 
@@ -95,7 +101,7 @@ export class Engine {
         try {
             switch (message.type) {
                 case CREATE_ORDER:
-                    return await this.createOrder({ ...message.data, price: Math.round(Number(message.data.price)*100)/100, quantity: Number(message.data.quantity), filled: 0, status: 'NEW' });
+                    return await this.createOrder({ ...message.data, price: Math.round(Number(message.data.price)*100)/100, quantity: Number(message.data.quantity), filled: 0, status: 'NEW', ts : new Date() });
                 case CANCEL_ORDER:
                     //@ts-ignore
                     return await this.cancelOrder(message.data.orderId, message.data.symbol);
@@ -153,7 +159,7 @@ export class Engine {
 
     private checkBalanceAndLockstock(userId: string, quantity: string, symbol: string, price: number) {
         const stock = this.balances[userId].stocks[symbol];
-        const relavent_orders: order[] = []
+        // const relavent_orders: order[] = []
         var ind = 0, available_quantity = 0, len = stock.length;
         while (ind < len && available_quantity < Number(quantity)) {
             var val = Math.min(stock[ind].quantity, Number(quantity) - available_quantity)
@@ -161,17 +167,17 @@ export class Engine {
             stock[ind].quantity = roundTwoDecimal(stock[ind].quantity - val)
             stock[ind].locked = roundTwoDecimal(stock[ind].locked + val)
 
-            const ord: order = {
-                orderType: 'Limit',
-                status: 'NEW',
-                symbol: symbol,
-                price: Number(price),
-                quantity: val,
-                side: 'Ask',
-                userId: userId,
-                filled: 0
-            }
-            relavent_orders.push(ord);
+            // const ord: order = {
+            //     orderType: 'Limit',
+            //     status: 'NEW',
+            //     symbol: symbol,
+            //     price: Number(price),
+            //     quantity: val,
+            //     side: 'Ask',
+            //     userId: userId,
+            //     filled: 0
+            // }
+            // relavent_orders.push(ord);
             ind++;
         }
 
@@ -179,7 +185,8 @@ export class Engine {
             throw new Error('Insufficient Quantity');
         }
 
-        return relavent_orders;
+        // return relavent_orders;
+        return;
     }
 
     public async createOrder(order: order) {
@@ -187,7 +194,7 @@ export class Engine {
             console.log("bid");
             this.checkBalanceAndLockfunds(order.userId, order.price.toString(), order.quantity.toString())
 
-            const res = matchBids(this.orderbooks[order.symbol], order)
+            const res = matchBids(this.orderbooks[order.symbol], order,this.completeOrders)
             // if (!res) return;
             await this.updateTradeDb(res.fills);
             await this.publishWsDepthUpdates(res.fills, 'Bid', order.symbol, order.price.toString());
@@ -225,7 +232,7 @@ export class Engine {
             console.log(order.price);
             console.log('order');
             
-            const res = matchAsks(this.orderbooks[order.symbol], order, relavent_orders)
+            const res = matchAsks(this.orderbooks[order.symbol], order ,this.completeOrders)
             if (!res) return;
             await this.updateTradeDb(res.fills);
             await this.publishWsDepthUpdates(res.fills, 'Ask', order.symbol, order.price.toString());
@@ -269,6 +276,8 @@ export class Engine {
 
             if (orderInd === -1) throw new Error('No order with order id : ' + orderId);
             order = this.orderbooks[symbol].asks.splice(orderInd, 1)[0];
+            order.status = 'CANCELED';
+            this.completeOrders.push({...order})
             // console.log(this.balances[order.userId].stocks[symbol]);
             var remainingQty = order.quantity - order.filled;
             const user_stock = this.balances[order.userId].stocks[symbol];
@@ -281,6 +290,8 @@ export class Engine {
             // console.log(this.balances[order.userId].stocks[symbol]);
         } else {
             order = this.orderbooks[symbol].bids.splice(orderInd, 1)[0];
+            order.status = 'CANCELED';
+            this.completeOrders.push({...order})
             // console.log(this.balances[order.userId].balance);
             const remainingPrice = (order.quantity - order.filled) * order.price;
             this.balances[order.userId].balance.locked = roundTwoDecimal(Number(this.balances[order.userId].balance.locked) - remainingPrice).toString();
@@ -298,7 +309,7 @@ export class Engine {
                 symbol: symbol,
                 side: order.side,
                 quantity: order.quantity.toString(),
-                status: 'CANCELED',
+                status: order.status,
                 executedQuantity: order.filled.toString(),
             }
         }
@@ -488,7 +499,7 @@ export class Engine {
         rev.forEach((ele) => {
             console.log(` p : ${ele.price}    - q : ${ele.quantity}    - f : ${ele.filled}    -u : ${ele.userId}     -o : ${ele.orderId}`);
         })
-        console.log("current price : " + orderbook.currentPrice);
+              console.log("current price : " + orderbook.currentPrice);
 
         orderbook.bids.forEach((ele: any) => {
             console.log(` p : ${ele.price}    - q : ${ele.quantity}    - f : ${ele.filled}     -u : ${ele.userId}     -o : ${ele.orderId}`);
