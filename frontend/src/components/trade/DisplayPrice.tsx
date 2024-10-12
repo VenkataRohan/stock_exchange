@@ -54,7 +54,8 @@ export const DisplayPrice = ({ symbol }: { symbol: string }) => {
                 </div>
                 <div className="flex flex-col justify-center">
                     <div className="font-normal text-lx text-zinc-400">24H Change</div>
-                    <div className={`font-semibold text-left text-2xl ${getChange() != '0.00' ? Number(getChange()) > 0 ? 'text-green-500' : 'text-pink-500' : ''} `}>{getChange()}</div>
+                    <div className={`font-semibold text-left text-2xl ${getChange() != '0.00' ? Number(getChange()) > 0 ? 'text-green-500' : 'text-pink-500' : ''} `}
+                     style={{ color: `${getChange() != '0.00' ? Number(getChange()) > 0 ? 'rgba(62, 201, 149, 0.9)' : 'rgba(239, 83, 85, 0.9)' : ''} ` }}> {getChange()}</div>
                 </div>
 
                 <div className="flex flex-col justify-center">

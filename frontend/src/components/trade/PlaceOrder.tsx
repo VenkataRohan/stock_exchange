@@ -67,19 +67,24 @@ export function PlaceOrder({ accessToken, setOrderStatus , symbol }: {accessToke
   }
 
   return <>
-   <div className="border-y border-slate-200	h-16">
-        <div className="flex flex-row gap-1 justify-between items-center h-full">
-          <button className={`font-semibold text-lime-500	 text-xl w-full focus:ring-red-500 ${side === 'Bid' ? 'bg-green-900' : ''} focus:outline-none hover:opacity-80 disabled:opacity-80 disabled:hover:opacity-80 text-center h-full text-base px-4 py-2`}
-            onClick={() => setSide('Bid')} >Buy</button>
-          <button className={`font-semibold text-red-500  text-xl w-full ${side === 'Ask' ? 'bg-pink-900' : ''} focus:ring-red-500 focus:outline-none hover:opacity-80 disabled:opacity-80 disabled:hover:opacity-80 text-center  h-full  text-base px-4 py-2`}
-            onClick={() => setSide('Ask')} >Sell</button>
+   <div className="border-y border-slate-200 border-l	h-16">
+        <div className="flex flex-row gap-1 justify-between items-center h-full"
+        >
+          <button className={`font-semibold 	text-xl w-full focus:ring-red-500  focus:outline-none hover:opacity-80 disabled:opacity-80 disabled:hover:opacity-80 text-center h-full text-base px-4 py-2`}
+            onClick={() => setSide('Bid')}
+            style={{ backgroundColor: `${side === 'Bid' ? 'rgba(12, 151, 98, 0.16)' : ''}`, color : 'rgba(62, 201, 149, 0.9)'}}
+             >Buy</button>
+          <button className={`font-semibold text-xl w-full  focus:ring-red-500 focus:outline-none hover:opacity-80 disabled:opacity-80 disabled:hover:opacity-80 text-center  h-full  text-base px-4 py-2`}
+            onClick={() => setSide('Ask')} 
+            style={{ backgroundColor: `${side === 'Ask' ? 'rgba(253, 75, 78, 0.32)' : ''}` , color : 'rgba(239, 83, 85, 0.9)'}}
+            >Sell</button>
         </div>
       </div>
     <div className="flex flex-col gap-4 px-6 py-3 ">
      
       <div className="flex flex-row gap-1 justify-between items-center">
-        {side === 'Bid' && <>  <p className="text-s font-normal">Available Balance </p>
-          <p className="text-2xl font-bold">{balance} </p></>}
+        {side === 'Bid' && <>  <p className="text-s font-normal"  >Available Balance </p>
+          <p className="text-2xl font-bold" >{balance} </p></>}
         {side === 'Ask' && <>  <p className="text-s font-normal">Available Balance </p>
           <p className="text-2xl font-bold">{stock} </p></>}
       </div>

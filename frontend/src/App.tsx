@@ -31,14 +31,14 @@ function App() {
 
   return (
     <Router>
-      <Navbar  accessToken = {accessToken}/>
+      <Navbar  accessToken = {accessToken} setAccessToken = {setAccessToken}/>
       
       <Routes>
       
         {/* <Route path="/" element={<Home />} /> */}
         <Route path="/" element={<Navigate to="/markets" />} />
         <Route path="/markets" element={<Markets/>} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login setAccessToken={setAccessToken}/>} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/market/:symbol" element={<MarketHome accessToken = {accessToken}  />} />
         <Route path="/get_order" element={<Orders accessToken = {accessToken} />} />

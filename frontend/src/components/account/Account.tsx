@@ -18,7 +18,7 @@ export const Account = ({ accessToken }: { accessToken: string }) => {
 
     return (
         <>
-        <div className="flex flex-row justify-around bg-black h-[90%]">
+        <div className="flex flex-row justify-around h-[90%]  bg-gradient-to-br from-black via-gray-900 to-blue-900">
         <div className="flex flex-col items-center w-2/3 ">
                 <StockBalance accessToken={accessToken} />
             </div>

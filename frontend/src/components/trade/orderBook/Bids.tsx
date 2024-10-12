@@ -49,13 +49,15 @@ const Bid = ({ bid, total_volume }: { bid: [string, string, number], total_volum
                     bottom: '1px',
                     right: '0px',
                     width: `${Number(bid[1])/20}%`,
-                    background: 'green',
+                    background: 'rgba(34, 171, 118, 0.16)',
                     transition: 'width 0.4s ease-in-out',
 
                 }}
             ></div>
             <div className="flex items-center flex-row relative h-full w-full overflow-hidden px-3 hover:border-t hover:border-dashed">
-                <p className="z-10 w-[30%] text-right text-lime-500 text-2xl font-normal tabular-nums">
+                <p className="z-10 w-[30%] text-right  text-2xl font-normal tabular-nums"
+                
+                style={{ color: 'rgba(62, 201, 149, 0.9)' }}>
                     {Number(bid[0]).toFixed(2)}
                 </p>
                 <p className="z-10 w-[30%] text-right text-2xl font-normal tabular-nums">

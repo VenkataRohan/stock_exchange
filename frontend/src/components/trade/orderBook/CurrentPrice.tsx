@@ -22,7 +22,7 @@ export const CurrentPrice = ({ symbol }: { symbol: string }) => {
 
     const getPriceColor = () => {
         if (prevPrice === '' || currentPrice === '') return "";
-        return currentPrice > prevPrice ? "text-green-500" : "text-red-500";
+        return currentPrice > prevPrice ? "rgba(62, 201, 149, 0.9)" : "rgba(239, 83, 85, 0.9)";
     };
 
     return <div className={`font-medium text-right w-[30%] text-2xl ${getPriceColor()}`}>{currentPrice}</div>

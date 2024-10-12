@@ -22,7 +22,8 @@ export const Trade = ({ symbol }: any) => {
                 <div className="flex-col flex w-full overflow-y-auto scrollbar-hide h-[650px]">
                     {trade && trade.map((ele: any) =>
                         <div key={ele.id} className="flex flex-row items-center">
-                            <div className={`flex justify-end text-2xl ${ele.side === 'Bid' ? 'text-green-500' : 'text-pink-500'}  w-[32%]`}>
+                            <div className={`flex justify-end text-2xl w-[32%]`}
+                             style={{ color: `${ele.side === 'Bid' ? 'rgba(62, 201, 149, 0.9)' : 'rgba(239, 83, 85, 0.9)'}` }}>
                                 {Number(ele.price).toFixed(2)}
                             </div>
                             <div className=" flex justify-end text-2xl w-[28%]">

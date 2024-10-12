@@ -48,13 +48,15 @@ const Ask = ({ ask, total_volume }: { ask: [string, string, number], total_volum
                     bottom: '1px',
                     right: '0px',
                     width: `${Number(ask[1])/20}%`,
-                    background: 'red',
+                    background: 'rgba(255, 100, 103, 0.32)',
                     transition: 'width 0.4s ease-in-out',
 
                 }}
             ></div>
             <div className="flex items-center flex-row relative h-full w-full overflow-hidden px-3 hover:border-t hover:border-dashed">
-                <p className="z-10 w-[30%] text-right text-2xl text-pink-500 font-normal tabular-nums">
+                <p className="z-10 w-[30%] text-right text-2xl  font-normal tabular-nums"
+                style={{ color: 'rgba(239, 83, 85, 0.9)' }}>
+                
                     {Number(ask[0]).toFixed(2)}
                 </p>
                 <p className="z-10 w-[30%] text-right text-2xl font-normal tabular-nums">

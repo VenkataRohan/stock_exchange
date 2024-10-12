@@ -14,7 +14,8 @@ export const MarketHome = ({ accessToken  }: {accessToken : string}) => {
     return (
         <>
             {orderStatus && <OrderStatus orderStatus={orderStatus} setOrderStatus={setOrderStatus} />}
-            <div className="flex flex-row  bg-black h-[90%]">
+            <div className="flex flex-row  bg-black h-[90%] ">
+            {/* <div className="flex flex-row  bg-black h-[90%]  bg-gradient-to-br from-black via-gray-900 to-blue-900 "> */}
                 <div className="w-4/5 border-stone-500">
                     <DisplayPrice symbol={symbol} />
                     <div className="flex flex-row" >

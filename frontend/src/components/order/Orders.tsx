@@ -66,13 +66,25 @@ export const Orders = ({ accessToken }: { accessToken: string }) => {
     }
 
     return (
-        <div className="bg-black">
-            <div className="flex flex-col items-center text-4xl">
-                Orders
-            </div>
-            <div className="grid grid-cols-5 gap-12 mt-10 px-5">
-                {data.map((order: order) => <OrderCard symbol={order.symbol} side={order.side} price={order.price} quantity={order.quantity} status={order['status'] as string} onCancel={() => onSubmit(order.orderId as string, order.symbol)} />)}
-            </div>
-        </div>
+        <div className="bg-black min-h-screen">
+    <div className="flex flex-col items-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-800 p-6 shadow-lg shadow-purple-800">
+        Orders
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8 px-6 py-10 bg-gradient-to-br from-black via-gray-900 to-blue-900">
+        {data.map((order: order) => (
+            <OrderCard
+                key={order.orderId} 
+                symbol={order.symbol}
+                side={order.side}
+                price={order.price}
+                quantity={order.quantity}
+                status={order['status'] as string}
+                onCancel={() => onSubmit(order.orderId as string, order.symbol)}
+            />
+        ))}
+    </div>
+</div>
+
     )
 }
