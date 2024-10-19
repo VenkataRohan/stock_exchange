@@ -23,7 +23,6 @@ export const Orders = ({ accessToken }: { accessToken: string }) => {
     }
     useEffect(() => {
         getOrders(accessToken).then(res => {
-            console.log(res);
 
             const symbols = res.data.map((ele: order) => `${WS_TRADE}@${ele.symbol}`);
             if (symbols.length != 0) {
@@ -33,8 +32,6 @@ export const Orders = ({ accessToken }: { accessToken: string }) => {
                 }
                 SingnalManager.getInstance().sendMessages(msg);
                 symbols.forEach((sym: string[]) => {
-                    console.log(`${WS_TRADE}@${sym}`);
-
                     SingnalManager.getInstance().registerCallback(`${sym}`, wsCallBack, `${WS_TRADE}-${sym}-orderstatus`)
                 })
             }
@@ -60,7 +57,6 @@ export const Orders = ({ accessToken }: { accessToken: string }) => {
 
     const onSubmit = (id: string, symbol: string) => {
         cancelOrder({ orderId: id, symbol: symbol }, accessToken).then((res) => {
-            console.log(res);
             getOrders(accessToken).then(res => setData(res.data))
         })
     }

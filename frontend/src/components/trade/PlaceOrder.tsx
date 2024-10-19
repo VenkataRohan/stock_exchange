@@ -19,8 +19,6 @@ export function PlaceOrder({ accessToken, setOrderStatus , symbol }: {accessToke
     SingnalManager.getInstance().sendMessages(msg)
 
     getStockBalance(accessToken, symbol).then(res => {
-      console.log(res);
-
       setBalance(res.data.balance);
       setStock(res.data[symbol])
     })
@@ -49,13 +47,10 @@ export function PlaceOrder({ accessToken, setOrderStatus , symbol }: {accessToke
 
     try {
       const res: any = await placeOrder(order,accessToken);
-      console.log(res);
       if (res.type === 'ORDER_PALACED') {
         setOrderStatus('ORDER_PLACED')
       }
       getStockBalance(accessToken, symbol).then(res => {
-        console.log(res);
-
         setBalance(res.data.balance);
         setStock(res.data[symbol])
       })
@@ -72,7 +67,7 @@ export function PlaceOrder({ accessToken, setOrderStatus , symbol }: {accessToke
         >
           <button className={`font-semibold 	text-xl w-full focus:ring-red-500  focus:outline-none hover:opacity-80 disabled:opacity-80 disabled:hover:opacity-80 text-center h-full text-base px-4 py-2`}
             onClick={() => setSide('Bid')}
-            style={{ backgroundColor: `${side === 'Bid' ? 'rgba(12, 151, 98, 0.16)' : ''}`, color : 'rgba(62, 201, 149, 0.9)'}}
+            style={{ backgroundColor: `${side === 'Bid' ? 'rgba(12, 151, 98, 0.36)' : ''}`, color : 'rgba(62, 201, 149, 0.9)'}}
              >Buy</button>
           <button className={`font-semibold text-xl w-full  focus:ring-red-500 focus:outline-none hover:opacity-80 disabled:opacity-80 disabled:hover:opacity-80 text-center  h-full  text-base px-4 py-2`}
             onClick={() => setSide('Ask')} 

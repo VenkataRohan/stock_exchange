@@ -36,7 +36,7 @@ const Bid = ({ bid, total_volume }: { bid: [string, string, number], total_volum
                     bottom: '1px',
                     right: '0px',
                     width: `${(100 * bid[2]) / total_volume}%`,
-                    background: 'rgba(12, 151, 98, 0.16)',
+                    background: 'rgba(12, 151, 98, 0.25)',
                     transition: 'width 0.4s ease-in-out',
 
                 }}
@@ -49,7 +49,7 @@ const Bid = ({ bid, total_volume }: { bid: [string, string, number], total_volum
                     bottom: '1px',
                     right: '0px',
                     width: `${Number(bid[1])/20}%`,
-                    background: 'rgba(34, 171, 118, 0.16)',
+                    background: 'rgba(54, 191, 138, 0.4)',
                     transition: 'width 0.4s ease-in-out',
 
                 }}

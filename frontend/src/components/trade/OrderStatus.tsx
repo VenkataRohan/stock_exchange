@@ -17,24 +17,25 @@ export const OrderStatus = ({ orderStatus, setOrderStatus }: any) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="bg-gray-600 flex flex-col gap-4 items-center justify-between w-[200px] h-[200px] p-2 rounded-lg shadow-lg border border-gray-300 relative">
-        <div className="p-8">
-          <p className="text-white p-1 mt-2 h-3/4">{orderStatus}</p>
-          <div className="flex flex-col items-center">
-            <button
-              className="bg-blue-500 w-[50%] p-1 text-white font-semibold rounded-md hover:bg-blue-600 transition duration-300"
-              onClick={() => setOrderStatus()}>
-              OK
-            </button>
-          </div>
-        </div>
-        <div className="mt-4 w-full bg-gray-200 rounded-full h-1 overflow-hidden">
-          <div
-            className="bg-blue-500 h-full transition-all duration-100"
-            style={{ width: `${progress}%` }}
-          ></div>
-        </div>
+  <div className="bg-gradient-to-br from-blue-800 via-blue-900 to-black flex flex-col items-center justify-between w-[220px] h-[140px] p-2 rounded-2xl shadow-2xl border border-gray-500 relative">
+    <div className="p-3 text-center">
+      <p className="text-white text-xl font-semibold tracking-wide h-3/4">{orderStatus === 'ORDER_PLACED' ? 'Order Placed': 'Please try again'}</p>
+      <div className="flex flex-col items-center mt-2">
+        <button
+          className="bg-gradient-to-r from-blue-400 to-blue-600 w-[40%] text-white font-bold rounded-full shadow-lg hover:from-blue-500 hover:to-blue-700 transition duration-300"
+          onClick={() => setOrderStatus()}>
+          OK
+        </button>
       </div>
     </div>
+    <div className="w-full bg-gray-300 rounded-full h-2 overflow-hidden shadow-inner">
+      <div
+        className="bg-gradient-to-r from-blue-400 to-blue-600 h-full transition-all duration-300 ease-out"
+        style={{ width: `${progress}%` }}
+      ></div>
+    </div>
+  </div>
+</div>
+
   )
 }

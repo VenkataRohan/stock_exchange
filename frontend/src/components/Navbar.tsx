@@ -2,15 +2,13 @@ import {  Link , useLocation } from 'react-router-dom';
 import { Logout } from './Logout';
 
 export const Navbar = ({accessToken , setAccessToken} : {accessToken : string, setAccessToken: any}) => {
-    const location = useLocation();
-    console.log(location);
-    
+    const location = useLocation();    
     const currentPath = location.pathname;
     const pathSegment = currentPath.split('/')[1] || 'markets';
 
     return (
 
-        <div className="flex flex-row justify-between h-24 bg-stone-900">
+        <div className="flex flex-row justify-between h-24 bg-gradient-to-br from-stone-800 via-stone-900 to-black">
         <div className="flex flex-row">
             <div className="mx-4 flex flex-row items-center justify-center">
                 <Link

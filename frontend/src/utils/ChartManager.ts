@@ -70,21 +70,17 @@ export class ChartManager {
       wickUpColor: '#838ca1',
     });
     this.currentBar = initialData[initialData.length -1]; 
-    console.log('this');
-    console.log(this.currentBar);
     
     this.candleSeries.setData(initialData);
   }
   public update(updatedPrice: number) {
-    console.log('updae form chart manager');
     
     const today = new Date();
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const dd = String(today.getDate()).padStart(2, '0');
     const formattedDate = `${yyyy}-${mm}-${dd}`;
-    console.log(formattedDate);
-    console.log(this.currentBar.time);
+
     //@ts-ignore
 
     

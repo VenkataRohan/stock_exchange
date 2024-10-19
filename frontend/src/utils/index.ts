@@ -18,15 +18,11 @@ export function priceLowerBoundAsc(price: number, arr: [string, string][]) {
 export function priceLowerBoundDsc(price: number, arr: [string, string][]) {
     var len = arr.length
     var low = 0, high = len - 1, res = len;
-    console.log(price);
-    
     while (low <= high) {
         var mid = Math.floor((high + low) / 2);
         if (Number(arr[mid][0]) > price) {
             low = mid + 1;
         } else {
-            console.log(mid);
-            
             res = mid;
             high = mid - 1;
         }

@@ -1,4 +1,4 @@
-const WS_URL = 'ws://localhost:3001'
+const WS_URL = 'ws://localhost:8080'
 
 export class SingnalManager {
     private ws: WebSocket;
@@ -34,10 +34,7 @@ export class SingnalManager {
 
         this.ws.onmessage = (event) => {
             const msg = JSON.parse(event.data);
-            console.log(msg);
-            
             if (this.callbackMap.get(msg.stream)) {
-                // console.log(this.callbackMap.get(msg.stream));                
                 const callbacks = this.callbackMap.get(msg.stream)
                 callbacks.forEach((ele : any) => ele.callback(msg.data));
             }

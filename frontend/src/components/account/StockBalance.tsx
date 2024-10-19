@@ -20,7 +20,6 @@ export const StockBalance = ({ accessToken }: { accessToken: string }) => {
     }
 
     useEffect(() => {
-
         getAllStockBalance(accessToken).then((res) => {
             const symbols = res.data.map((ele: stockBalance) => `${WS_TICKER}@${ele.symbol}`)
             if (symbols.length != 0) {
@@ -56,7 +55,11 @@ export const StockBalance = ({ accessToken }: { accessToken: string }) => {
     }
 
     function percentageChange(avg: string, price: string) {
-        if (avg === '0') {
+        if(price === '0.00'){
+            return 0.000;
+        }
+        
+        if (avg === '0.00') {
             return Number(price) > 0 ? 100 : -100;
         }
         return ((Number(price) - Number(avg)) / Number(avg)) * 100;

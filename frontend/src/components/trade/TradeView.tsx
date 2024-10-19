@@ -27,7 +27,7 @@ export function TradeView({
       try {
         klineData = await getTicker(symbol)
         klineData = klineData.map((e: any)=> ({...e , time : new Date(e.time).toLocaleDateString().split('/').reverse().join('-') }))
-        console.log(klineData.sort((a :any,b : any)=> new Date(a.time).getTime() - new Date(b.time).getTime()));
+        klineData.sort((a :any,b : any)=> new Date(a.time).getTime() - new Date(b.time).getTime());
         
       } catch (e) { }
 
