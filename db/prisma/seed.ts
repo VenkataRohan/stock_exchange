@@ -1,5 +1,5 @@
 import { PrismaClient, Prisma } from '@prisma/client';
-import prisma from "../src/prisma";
+import prisma from "./prisma";
 
 const stocks: [string, number][] = [['AERONOX', 1000.8], ['QUICKNET', 500.12], ['SMARTINC', 825.79], ['SUNCO', 792.39], ['TECHLY', 999.81], ['EASYBUY', 672.46]];
 
@@ -97,7 +97,7 @@ const generateKlineData = (symbol: string, currPrise: number) => {
         price: prev.toFixed(2),
         time: new Date(date),
     })
-    date.setDate(date.getDate() + 1);
+    date.setDate(date.getDate() + 2);
     for (var ind = 0; ind < 190; ind++) {
         const num_rec = numberOfRecordsforEachDay();
         date.setDate(date.getDate() - 1);

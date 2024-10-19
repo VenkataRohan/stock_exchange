@@ -1,0 +1,92 @@
+version: '3'
+services:
+  rabbitmq:
+    image: rabbitmq:latest
+    ports:
+      - "5672:5672"
+    networks:
+      - app-network
+    # volumes:
+    #   - rabbitmq_data:/var/lib/rabbitmq 
+
+  postgres:
+    image: timescale/timescaledb-ha:pg16
+    environment:
+      - POSTGRES_PASSWORD=test
+    networks:
+      - app-network
+    volumes:
+      - db_data11:/home/postgres/pgdata/data
+
+  api:
+    image: se-api
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    depends_on:
+    - rabbitmq      
+
+  engine:
+    image: se-engine
+    environment:
+      - INIT=${INIT}
+      - MM=${MM}
+    networks:
+      - app-network
+    depends_on:
+    - db
+    - rabbitmq
+
+  db:
+    image: se-db
+    environment:
+      - INIT=${INIT}
+      - DATABASE_URL=postgres://postgres:test@postgres/stock_db?schema=public
+    networks:
+      - app-network
+    depends_on:
+    - postgres
+    - rabbitmq
+           
+  websocket1:
+    image: se-sockets
+    ports:
+      - "3001:3001"
+    networks:
+      - app-network
+    depends_on:
+    - rabbitmq
+
+  websocket2:
+    image: se-sockets
+    ports:
+      - "3002:3001"
+    networks:
+      - app-network
+    depends_on:
+    - rabbitmq
+
+  nginx:
+    image: nginx
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - websocket1
+      - websocket2
+    networks:
+      - app-network
+
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  # rabbitmq_data:
+  #   driver: local
+  db_data11:
+    driver: local
+

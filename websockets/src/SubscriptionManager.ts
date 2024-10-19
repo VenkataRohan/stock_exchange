@@ -14,7 +14,9 @@ export class SubscriptionManager {
 
     public async connect(){
         if (!this.connection) {
-            this.connection = await connect('amqp://localhost');
+            // this.connection = await connect(`amqp://localhost`);
+            this.connection = await connect(`amqp://rabbitmq`);
+            // this.connection = await connect(`amqp://192.168.1.9`);
             this.channel = await this.connection.createChannel();
             await this.channel.assertExchange('WsUpdates', 'direct', { durable: false });
             this.queue = await this.channel.assertQueue('', { exclusive: true });
@@ -22,7 +24,7 @@ export class SubscriptionManager {
                 this.queue.queue,
                 async (msg) => {
                     if (msg) {
-                        console.log(" [x] %s: '%s'", msg.fields.routingKey, msg.content.toString());
+                        // console.log(" [x] %s: '%s'", msg.fields.routingKey, msg.content.toString());
                         this.topicToUser.get( msg.fields.routingKey)?.forEach((userId)=>UserManager.getInstance().getUser(userId)?.emit(msg.content.toString() || ""))
                     }
                 },
@@ -50,8 +52,6 @@ export class SubscriptionManager {
 
             if (!this.channel || !this.queue) return;
             await this.channel.bindQueue(this.queue.queue, 'WsUpdates', subscription);
-            console.log("subscribed");
-            
         }
     }
 
@@ -63,22 +63,15 @@ export class SubscriptionManager {
             if(this.userToTopic.get(userId)?.length === 0){
                 this.userToTopic.delete(userId);
             }
-            console.log( this.userToTopic.get(userId));
         }
-
         const users = this.topicToUser.get(subscription);
-        console.log(users);
-        
         if (users) {
             this.topicToUser.set(subscription, users.filter(e => e !== userId));
             if (this.topicToUser.get(subscription)?.length === 0) {
                 this.topicToUser.delete(subscription);
                 this.userToTopic.set(userId, this.userToTopic.get(userId)?.filter(e => e !== subscription) || [])
-                console.log( this.userToTopic.get(userId));
                 if (!this.channel || !this.queue) return;
-
                 await this.channel.unbindQueue(this.queue.queue, 'WsUpdates', subscription);                
-                console.log("unsubscribed");
             }
         }
     }

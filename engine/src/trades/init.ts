@@ -4,7 +4,7 @@ import { getRandomOrderId, roundTwoDecimal } from '../utils';
 import fs from 'fs'
 const stocks: [string, number][] = [['AERONOX', 1000.8], ['QUICKNET', 500.12], ['SMARTINC', 825.79], ['SUNCO', 792.39], ['TECHLY', 999.81], ['EASYBUY', 672.46]];
 
-const BASE_URL = 'http://localhost:3000/api/v1';
+const BASE_URL = 'http://192.168.1.9:3000/api/v1';
 
 const orderbooks: orderbookType = {}
 
@@ -26,8 +26,10 @@ export const getBalances = async (): Promise<any> => {
     })
     return res.data;
 }
-const main = async () => {
+export const initOrderbook = async () => {
+
     const res = await getBalances();
+    
     const balances: userBalances = {}
     res.forEach((ele: any) => {
 
@@ -36,15 +38,12 @@ const main = async () => {
             stocks: ele.data.stocks
         }
     })
-    //@ts-ignore
-    const mm = ['MMASK1', 'MMASK2', 'MMBIDS1', 'MMBIDS2']
-   
 
+    const mm = ['MMASK1', 'MMASK2', 'MMBIDS1', 'MMBIDS2']
+    console.log("Generating Orderbook.......");
+    
     generateOrderBook(balances,mm);
     // console.log(JSON.stringify(balances));
-
-
-
 }
 
 
@@ -67,7 +66,7 @@ const generateOrderBook = (balances: userBalances , mm : string[]) => {
                     filled: 0,
                     side: "Bid",
                     userId: userId,
-                    ts: getRandomTimeToday().toISOString(),
+                    ts: getRandomTimeToday(),
                     orderType: 'Limit',
                     symbol: symbol,
                     status: 'NEW'
@@ -96,7 +95,7 @@ const generateOrderBook = (balances: userBalances , mm : string[]) => {
                     filled: 0,
                     side: "Ask",
                     userId: userId,
-                    ts: getRandomTimeToday().toISOString(),
+                    ts: getRandomTimeToday(),
                     orderType: 'Limit',
                     symbol: symbol,
                     status: 'NEW'
@@ -106,12 +105,12 @@ const generateOrderBook = (balances: userBalances , mm : string[]) => {
             orderbooks[symbol].asks.sort((a, b) => a.price === b.price ? (new Date(a.ts).getTime() - new Date(b.ts).getTime()) : a.price - b.price)
             orderbooks[symbol].bids.sort((a, b) => a.price === b.price ? (new Date(a.ts).getTime() - new Date(b.ts).getTime()) : b.price - a.price)
 
-            // console.log(orderbooks[symbol].asks);
-            // console.log(orderbooks[symbol].bids);
         })
     })
-
-    fs.writeFileSync('./src/trades/test.json', JSON.stringify({ orderbooks, balances }, null, 2));
+    
+    fs.writeFileSync(__dirname+'/test.json', JSON.stringify({ orderbooks, balances }, null, 2));
+    console.log("done");
+    
 }
 
 function getRandomTimeToday() {
@@ -126,7 +125,4 @@ function getRandomTimeToday() {
     return randomTime;
 }
 
-
-
-
-main()
+// initOrderbook()

@@ -13,6 +13,8 @@ export class UserManager {
     }
 
     public addUser(ws: WebSocket) {
+        console.log('user added ');
+        
         var userId = this.getRandomId();
         const user = new User(userId, ws);
         this.users.set(userId, user);

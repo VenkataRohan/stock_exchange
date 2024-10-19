@@ -187,8 +187,8 @@ export type sideType = order & {
 }
 
 export type orderbook = {
-    asks: sideType[];
-    bids: sideType[];
+    asks: order[];
+    bids: order[];
     currentPrice: string
 }
 

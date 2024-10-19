@@ -19,13 +19,11 @@ export class User{
             const msg = JSON.parse(message);
 
             if(msg.method == 'SUBSCRIBE'){
-                console.log(msg); 
                 await SubscriptionManager.getInstance().connect();
                 msg.params.forEach(async(ele : string) => await SubscriptionManager.getInstance().subscribe(this.id,ele));
             }
 
             if(msg.method == 'UNSUBSCRIBE'){
-                console.log(msg);  
                 await SubscriptionManager.getInstance().connect();
                 msg.params.forEach(async(ele : string) => await  SubscriptionManager.getInstance().unsubscribe(this.id,ele));
             }

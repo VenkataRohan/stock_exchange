@@ -103,10 +103,7 @@ export function matchBids(orderbook: orderbook, order: order, completeOrders  : 
         //@ts-ignore
         orderbook.bids.splice(upperboundInd, 0, bid);
     }
-
     orderbook.currentPrice = last_traded_price;
-    console.log(fills);
-
     return {
         fills,
         excutedtotalprice,

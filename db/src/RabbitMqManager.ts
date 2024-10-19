@@ -1,6 +1,6 @@
 import { Channel, Connection, Replies, connect } from 'amqplib';
 import { GET_TRADE, LOGIN, TRADE_ADDED, fills, messageFromApi, messageFromEngine, GET_COMPLETE_BALANCES,GET_DAILY_STOCKS_STATS, SIGNUP, GET_TICKER, ticker, GET_DAILY_STOCK_STATS } from './types';
-import prisma from './prisma';
+import prisma from '../prisma/prisma';
 import { Prisma } from '@prisma/client';
 
 export class RabbitMqManager {
@@ -12,7 +12,9 @@ export class RabbitMqManager {
 
     public async connect() {
         if (!this.connection) {
-            this.connection = await connect('amqp://localhost');
+            // this.connection = await connect(`amqp://localhost`);
+            this.connection = await connect(`amqp://rabbitmq`);
+            // this.connection = await connect(`amqp://192.168.1.5`);
             this.channel = await this.connection.createChannel();
             await this.channel.assertQueue('api_db_queue', { durable: true })
             await this.channel.assertQueue('db_queue', { durable: true })
@@ -20,7 +22,7 @@ export class RabbitMqManager {
                 'db_queue',
                 async (msg) => {
                     if (msg) {
-                        console.log(" [x] %s: '%s'", msg.fields.routingKey, msg.content.toString());
+                        // console.log(" [x] %s: '%s'", msg.fields.routingKey, msg.content.toString());
                         this.process(JSON.parse(msg.content.toString()))
                     }
                 },
@@ -31,9 +33,7 @@ export class RabbitMqManager {
                 'api_db_queue',
                 async (msg) => {
                     if (msg) {
-                        console.log(" [x] %s: '%s'", msg.fields.routingKey, msg.content.toString());
                         const response = await this.process(JSON.parse(msg.content.toString()))
-                        console.log(response);
                         if (response)
                             this.channel?.sendToQueue(msg.properties.replyTo, Buffer.from(JSON.stringify(response)), {
                                 correlationId: msg.properties.correlationId
@@ -58,7 +58,7 @@ export class RabbitMqManager {
     private async process(message: messageFromEngine | messageFromApi) {
         switch (message.type) {
             case TRADE_ADDED:
-                console.log(await this.updateTrade(message.data));
+                await this.updateTrade(message.data);
                 return;
             case GET_TRADE:
                 return await this.getTrade(message.data)
