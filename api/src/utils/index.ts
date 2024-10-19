@@ -16,10 +16,7 @@ export function authenticateToken(req: AuthenticatedRequest, res: Response, next
 
     try {
         const secretKey = process.env.JWT_SECRECT as string;
-        console.log(secretKey);
-        
         const decoded = jwt.verify(token, secretKey) as JwtPayload;
-        console.log(decoded);
         
         // if (decoded && decoded.userId !== req.body.userId) {
         //     return res.sendStatus(403); 

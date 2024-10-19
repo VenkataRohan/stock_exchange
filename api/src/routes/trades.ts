@@ -5,7 +5,6 @@ export const tradeRouter = Router();
 
 tradeRouter.get('/', async (req, res) => {
     const symbol = req.query.symbol
-    console.log(symbol);
     const rabbitMqManager = new RabbitMqManager();
     await rabbitMqManager.connect();
     const response = await rabbitMqManager.queryDb({
@@ -14,8 +13,5 @@ tradeRouter.get('/', async (req, res) => {
             symbol: symbol as string
         }
     })
-
-    console.log(response);
-
     res.send(JSON.parse(response));
 })

@@ -41,7 +41,6 @@ orderRouter.post('/', async (req : AuthenticatedRequest, res) => {
 
 orderRouter.delete('/', async (req, res) => {
     const { orderId, symbol} = req.body
-    console.log(req.body);
     const rabbitMqManager = new RabbitMqManager();
     await rabbitMqManager.connect();
     const response = await rabbitMqManager.sendAndAwait({

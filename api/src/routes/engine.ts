@@ -5,7 +5,6 @@ export const engineRouter = Router();
 
 engineRouter.get('/getBalances',async(req,res)=>{
     const symbol = req.query.symbol
-    console.log(symbol);
     const rabbitMqManager = new RabbitMqManager();
     await rabbitMqManager.connect();
     const response = await rabbitMqManager.queryDb({

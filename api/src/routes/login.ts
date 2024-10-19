@@ -7,7 +7,6 @@ export const loginRouter = Router();
 
 loginRouter.post('/', async (req, res) => {
     const { email, password } = req.body
-    console.log(email);
 
     const rabbitMqManager = new RabbitMqManager();
     await rabbitMqManager.connect();
@@ -24,7 +23,6 @@ loginRouter.post('/', async (req, res) => {
         var token = jwt.sign({ userId: JSON.parse(response).id }, process.env.JWT_SECRECT as string);
         return res.json({ token });
     }
-
 
     res.status(400).send({ "msg": "password did not match" });
 })

@@ -6,7 +6,6 @@ export const stockStatsRouter = Router();
 stockStatsRouter.get('/', async (req, res) => {
     const symbols = req.query.symbol as string
     const symbols_arr = symbols.split(',').map(e  => e.trim());
-    console.log(symbols);
     const rabbitMqManager = new RabbitMqManager();
     await rabbitMqManager.connect();
     const response = await rabbitMqManager.queryDb({
@@ -21,7 +20,6 @@ stockStatsRouter.get('/', async (req, res) => {
 
 stockStatsRouter.get('/currentPrice', async (req, res) => {
     const symbol = req.query.symbol
-    console.log(symbol);
     const rabbitMqManager = new RabbitMqManager();
     await rabbitMqManager.connect();
     const response = await rabbitMqManager.sendAndAwait({

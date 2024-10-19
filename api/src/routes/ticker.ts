@@ -5,7 +5,6 @@ export const tickerRouter = Router();
 
 tickerRouter.get('/', async (req, res) => {
     const symbol = req.query.symbol
-    console.log(symbol);
     const rabbitMqManager = new RabbitMqManager();
     await rabbitMqManager.connect();
     const response = await rabbitMqManager.queryDb({
@@ -20,7 +19,6 @@ tickerRouter.get('/', async (req, res) => {
 
 tickerRouter.get('/currentPrice', async (req, res) => {
     const symbol = req.query.symbol
-    console.log(symbol);
     const rabbitMqManager = new RabbitMqManager();
     await rabbitMqManager.connect();
     const response = await rabbitMqManager.sendAndAwait({
