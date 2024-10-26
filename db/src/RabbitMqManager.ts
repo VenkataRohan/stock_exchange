@@ -150,7 +150,11 @@ export class RabbitMqManager {
         return await prisma.trade.findMany({
             where: {
                 symbol: symbol
-            }
+            },
+            orderBy: {
+                time: 'desc'
+            },
+            take: 100
         })
     }
 

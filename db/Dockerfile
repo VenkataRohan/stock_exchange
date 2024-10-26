@@ -15,7 +15,7 @@ RUN npx prisma generate
 
 COPY . .
 
-EXPOSE 5432
+EXPOSE 5555
 
 # CMD ["bash","./wait-for-it.sh", "rabbitmq:5672","--","npm", "run", "dev" ]
 #--no-reset --skip-seed
