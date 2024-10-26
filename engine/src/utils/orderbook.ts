@@ -72,7 +72,7 @@ export function matchBids(orderbook: orderbook, order: order, completeOrders  : 
             quantity: orderbook.asks[i].quantity,
             status : orderbook.asks[i].quantity === filledQty ? 'FILLED' : 'PARTIALLY_FILLED',
             side: orderbook.asks[i].side, // Bid , Ask
-            filled: orderbook.asks[i].filled,
+            filled: filledQty,
             userId: orderbook.asks[i].userId,
             otherUserId: order.userId,
             ts : new Date()
@@ -136,9 +136,9 @@ export function matchAsks(orderbook: orderbook, order : order ,completeOrders : 
             orderType: 'Limit',
             symbol:  order.symbol,
             price: orderbook.bids[i].price,
-            quantity: filledQty,
+            quantity:  orderbook.bids[i].quantity,
             side: orderbook.bids[i].side, // Bid , Ask
-            filled: order.filled,
+            filled: filledQty,
             status : orderbook.bids[i].quantity === filledQty ? 'FILLED' : 'PARTIALLY_FILLED',
             userId:  orderbook.bids[i].userId,
             otherUserId: order.userId,

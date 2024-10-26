@@ -22,8 +22,8 @@ export class RabbitMqManager {
     public async connect() {
         if (!this.connection) {
             // this.connection = await connect('amqp://localhost');
-            // this.connection = await connect('amqp://rabbitmq');
-            this.connection = await connect(`amqp://192.168.1.9`);
+            this.connection = await connect('amqp://rabbitmq');
+            // this.connection = await connect(`amqp://192.168.1.9`);
             this.channel = await this.connection.createChannel();
             await this.channel.assertExchange('WsUpdates', 'direct', { durable: false });
             await this.channel.assertQueue('db_queue',{durable: true})
@@ -69,6 +69,8 @@ export class RabbitMqManager {
             async (msg) => {
                 if (msg) {
                     const message = JSON.parse(msg.content.toString())
+                    console.log(message);
+                    
                     const response = await this.engine.process(message)
                     this.channel?.sendToQueue(msg.properties.replyTo, Buffer.from(JSON.stringify(response)), {
                         correlationId: msg.properties.correlationId

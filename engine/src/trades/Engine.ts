@@ -203,6 +203,7 @@ export class Engine {
         if (order.side === 'Bid') {
             this.checkBalanceAndLockfunds(order.userId, order.price.toString(), order.quantity.toString())
             const res = matchBids(this.orderbooks[order.symbol], order, this.completeOrders)
+            this.updateBalance(res.fills,'Bids');
             // if (!res) return;
             await this.updateTradeDb(res.fills);
             await this.publishWsDepthUpdates(res.fills, 'Bid', order.symbol, order.price.toString());
@@ -226,8 +227,9 @@ export class Engine {
             return resp
 
         } else {
+            this.checkBalanceAndLockstock(order.userId,order.quantity.toString(),order.symbol,order.price)
             const res = matchAsks(this.orderbooks[order.symbol], order, this.completeOrders)
-            if (!res) return;
+            this.updateBalance(res.fills,'Asks');
             await this.updateTradeDb(res.fills);
             await this.publishWsDepthUpdates(res.fills, 'Ask', order.symbol, order.price.toString());
             if (res.fills.length != 0) {
@@ -353,13 +355,14 @@ export class Engine {
     private updateBalance(fills: fills[], side: 'Bids' | 'Asks') {
         if (side === "Bids") {
             fills.forEach((fill) => {
-                const fillPrice = roundTwoDecimal(fill.price * fill.quantity);
+                const fillPrice = roundTwoDecimal(fill.price * fill.filled);
                 this.balances[fill.userId].balance.available = roundTwoDecimal(Number(this.balances[fill.userId].balance.available) + fillPrice).toString();
                 const user_stock = this.balances[fill.userId].stocks[fill.symbol];
-                var fill_quantity = fill.quantity;
+                var fill_quantity = fill.filled;
                 for (var ind = 0; ind < user_stock.length; ind++) {
                     if (user_stock[ind].locked > fill_quantity) {
                         user_stock[ind].locked = user_stock[ind].locked - fill_quantity;
+                        fill_quantity = 0
                         break;
                     } else {
                         fill_quantity -= user_stock[ind].locked
@@ -372,20 +375,21 @@ export class Engine {
                 }
 
                 this.balances[fill.otherUserId].balance.locked = roundTwoDecimal((Number(this.balances[fill.otherUserId].balance.locked) - fillPrice)).toString();
-                this.balances[fill.otherUserId].stocks[fill.symbol].push({ id: fill.orderId as string, quantity: fill.quantity, locked: 0, price: fillPrice.toString(), ts: new Date().toISOString() })
+                this.balances[fill.otherUserId].stocks[fill.symbol].push({ id: fill.orderId as string, quantity: fill.filled, locked: 0, price: fillPrice.toString(), ts: new Date().toISOString() })
             })
         } else {
             fills.forEach((fill) => {
-                const fillPrice = roundTwoDecimal(fill.price * fill.quantity);
+                const fillPrice = roundTwoDecimal(fill.price * fill.filled);
                 this.balances[fill.userId].balance.locked = roundTwoDecimal(Number(this.balances[fill.userId].balance.locked) - fillPrice).toString();
-                this.balances[fill.userId].stocks[fill.symbol].push({ id: fill.orderId as string, quantity: fill.quantity, locked: 0, price: fillPrice.toString(), ts: new Date().toISOString() })
+                this.balances[fill.userId].stocks[fill.symbol].push({ id: fill.orderId as string, quantity: fill.filled, locked: 0, price: fillPrice.toString(), ts: new Date().toISOString() })
 
                 this.balances[fill.otherUserId].balance.available = roundTwoDecimal(Number(this.balances[fill.otherUserId].balance.available) + fillPrice).toString();
                 const other_user_stock = this.balances[fill.otherUserId].stocks[fill.symbol];
-                var fill_quantity = fill.quantity;
+                var fill_quantity = fill.filled;
                 for (var ind = 0; ind < other_user_stock.length; ind++) {
                     if (other_user_stock[ind].locked > fill_quantity) {
                         other_user_stock[ind].locked = other_user_stock[ind].locked - fill_quantity;
+                        fill_quantity = 0;
                         break;
                     } else {
                         fill_quantity -= other_user_stock[ind].locked
@@ -415,6 +419,7 @@ export class Engine {
                     u: ele.userId,
                     st: ele.status,
                     o: ele.otherUserId,
+                    si : ele.side,
                 }
             }
             await RabbitMqManager.getInstance().connect();

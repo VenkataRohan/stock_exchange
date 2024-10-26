@@ -4,7 +4,7 @@ import { getRandomOrderId, roundTwoDecimal } from '../utils';
 import fs from 'fs'
 const stocks: [string, number][] = [['AERONOX', 1000.8], ['QUICKNET', 500.12], ['SMARTINC', 825.79], ['SUNCO', 792.39], ['TECHLY', 999.81], ['EASYBUY', 672.46]];
 
-const BASE_URL = 'http://192.168.1.9:3000/api/v1';
+const BASE_URL = 'http://api:3000/api/v1';
 
 const orderbooks: orderbookType = {}
 
